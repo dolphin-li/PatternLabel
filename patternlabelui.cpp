@@ -12,7 +12,7 @@ PatternLabelUI::PatternLabelUI(QWidget *parent)
 	: QMainWindow(parent)
 {
 	ui.setupUi(this);
-
+	m_updateSbIndex = true;
 	try
 	{
 		g_dataholder.init();
@@ -39,6 +39,7 @@ void PatternLabelUI::on_actionLoad_image_list_triggered()
 		if (name.isEmpty())
 			return;
 		g_dataholder.loadImageList(name.toStdString());
+		ui.sbCurIndex->setMaximum(g_dataholder.m_imgInfos.size());
 		updateByIndex(0, 0);
 	} catch (std::exception e)
 	{
@@ -57,7 +58,24 @@ void PatternLabelUI::on_actionLoad_xml_triggered()
 		if (name.isEmpty())
 			return;
 		g_dataholder.loadXml(name.toStdString());
+		ui.sbCurIndex->setMaximum(g_dataholder.m_imgInfos.size());
 		updateByIndex(0, 0);
+	} catch (std::exception e)
+	{
+		std::cout << e.what() << std::endl;
+	} catch (...)
+	{
+		std::cout << "unknown error" << std::endl;
+	}
+}
+
+void PatternLabelUI::on_sbCurIndex_valueChanged(int v)
+{
+	if (!m_updateSbIndex)
+		return;
+	try
+	{
+		updateByIndex(v, 0);
 	} catch (std::exception e)
 	{
 		std::cout << e.what() << std::endl;
@@ -95,6 +113,9 @@ void PatternLabelUI::on_pbPrevIndex_clicked()
 	try
 	{
 		updateByIndex(g_dataholder.m_curIndex - 1, 0);
+		m_updateSbIndex = false;
+		ui.sbCurIndex->setValue(g_dataholder.m_curIndex);
+		m_updateSbIndex = true;
 	} catch (std::exception e)
 	{
 		std::cout << e.what() << std::endl;
@@ -109,6 +130,9 @@ void PatternLabelUI::on_pbNextIndex_clicked()
 	try
 	{
 		updateByIndex(g_dataholder.m_curIndex + 1, 0);
+		m_updateSbIndex = false;
+		ui.sbCurIndex->setValue(g_dataholder.m_curIndex);
+		m_updateSbIndex = true;
 	} catch (std::exception e)
 	{
 		std::cout << e.what() << std::endl;
@@ -151,7 +175,7 @@ void PatternLabelUI::updateByIndex(int index, int imgId)
 	if (g_dataholder.m_imgInfos.size() == 0)
 		return;
 	if (g_dataholder.m_curIndex >= 0 && g_dataholder.m_curIndex_imgIndex >= 0)
-		g_dataholder.saveXml(ldp::fullfile(g_dataholder.m_rootPath, "patterns.xml"));
+		g_dataholder.saveXml(ldp::fullfile(g_dataholder.m_rootPath, g_dataholder.m_xmlExportPureName));
 	g_dataholder.m_curIndex = (index + g_dataholder.m_imgInfos.size()) % g_dataholder.m_imgInfos.size();
 	const auto& info = g_dataholder.m_imgInfos.at(g_dataholder.m_curIndex);
 	g_dataholder.m_curIndex_imgIndex = (imgId + info.numImages()) % info.numImages();

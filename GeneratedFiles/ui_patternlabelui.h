@@ -17,11 +17,13 @@
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHeaderView>
+#include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpacerItem>
+#include <QtWidgets/QSpinBox>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
@@ -58,6 +60,13 @@ public:
     QSpacerItem *verticalSpacer;
     QDockWidget *dockWidgetBottom;
     QWidget *dockWidgetContentsBottom;
+    QGridLayout *gridLayout_5;
+    QGroupBox *groupBox_2;
+    QGridLayout *gridLayout_4;
+    QLabel *label;
+    QSpinBox *sbCurIndex;
+    QSpacerItem *horizontalSpacer_5;
+    QSpacerItem *verticalSpacer_2;
 
     void setupUi(QMainWindow *PatternLabelUIClass)
     {
@@ -156,9 +165,40 @@ public:
         PatternLabelUIClass->addDockWidget(static_cast<Qt::DockWidgetArea>(2), dockWidgetRight);
         dockWidgetBottom = new QDockWidget(PatternLabelUIClass);
         dockWidgetBottom->setObjectName(QStringLiteral("dockWidgetBottom"));
-        dockWidgetBottom->setMinimumSize(QSize(80, 150));
+        dockWidgetBottom->setMinimumSize(QSize(115, 150));
         dockWidgetContentsBottom = new QWidget();
         dockWidgetContentsBottom->setObjectName(QStringLiteral("dockWidgetContentsBottom"));
+        gridLayout_5 = new QGridLayout(dockWidgetContentsBottom);
+        gridLayout_5->setSpacing(6);
+        gridLayout_5->setContentsMargins(11, 11, 11, 11);
+        gridLayout_5->setObjectName(QStringLiteral("gridLayout_5"));
+        groupBox_2 = new QGroupBox(dockWidgetContentsBottom);
+        groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
+        gridLayout_4 = new QGridLayout(groupBox_2);
+        gridLayout_4->setSpacing(6);
+        gridLayout_4->setContentsMargins(11, 11, 11, 11);
+        gridLayout_4->setObjectName(QStringLiteral("gridLayout_4"));
+        label = new QLabel(groupBox_2);
+        label->setObjectName(QStringLiteral("label"));
+
+        gridLayout_4->addWidget(label, 0, 0, 1, 1);
+
+        sbCurIndex = new QSpinBox(groupBox_2);
+        sbCurIndex->setObjectName(QStringLiteral("sbCurIndex"));
+
+        gridLayout_4->addWidget(sbCurIndex, 0, 1, 1, 1);
+
+
+        gridLayout_5->addWidget(groupBox_2, 0, 0, 1, 1);
+
+        horizontalSpacer_5 = new QSpacerItem(1005, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        gridLayout_5->addItem(horizontalSpacer_5, 0, 1, 2, 1);
+
+        verticalSpacer_2 = new QSpacerItem(20, 68, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+        gridLayout_5->addItem(verticalSpacer_2, 1, 0, 1, 1);
+
         dockWidgetBottom->setWidget(dockWidgetContentsBottom);
         PatternLabelUIClass->addDockWidget(static_cast<Qt::DockWidgetArea>(8), dockWidgetBottom);
 
@@ -188,6 +228,8 @@ public:
         pbNextIndex->setShortcut(QApplication::translate("PatternLabelUIClass", "Right", 0));
         pbNextImageThisIndex->setText(QApplication::translate("PatternLabelUIClass", "\\/", 0));
         pbNextImageThisIndex->setShortcut(QApplication::translate("PatternLabelUIClass", "Down", 0));
+        groupBox_2->setTitle(QString());
+        label->setText(QApplication::translate("PatternLabelUIClass", "Index", 0));
     } // retranslateUi
 
 };

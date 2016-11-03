@@ -20,12 +20,14 @@ public:
 	void on_pbLastImageThisIndex_clicked();
 	void on_pbNextImageThisIndex_clicked();
 	void pbGroupRbTypesClicked(int buttonID);
+	void on_sbCurIndex_valueChanged(int v);
 protected:
 	void setupRadioButtons();
 	void updateByIndex(int index, int imgId);
 private:
 	Ui::PatternLabelUIClass ui;
 	QMap<QString, QSharedPointer<QButtonGroup>> m_rbTypes;
+	bool m_updateSbIndex;
 };
 
 #endif // PATTERNLABELUI_H

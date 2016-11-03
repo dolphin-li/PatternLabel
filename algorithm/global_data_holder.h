@@ -17,6 +17,7 @@ public:
 	std::string m_rootPath;
 	int m_curIndex;
 	int m_curIndex_imgIndex;
+	std::string m_xmlExportPureName;
 };
 
 extern GlobalDataHolder g_dataholder;

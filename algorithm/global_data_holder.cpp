@@ -13,6 +13,7 @@ void GlobalDataHolder::init()
 {
 	m_curIndex = -1;
 	m_curIndex_imgIndex = -1;
+	m_xmlExportPureName = "patterns.xml";
 }
 
 void GlobalDataHolder::loadImageList(std::string filename)
@@ -27,8 +28,9 @@ void GlobalDataHolder::loadImageList(std::string filename)
 		std::ostreambuf_iterator<char>(fstm_s));
 	fstm_f.close();
 	
-	std::string tmp;
-	ldp::fileparts(filename, m_rootPath, tmp, tmp);
+	std::string txtname, tmp;
+	ldp::fileparts(filename, m_rootPath, txtname, tmp);
+	m_xmlExportPureName = txtname + ".xml";
 
 	std::string lineBuffer;
 	do
@@ -63,8 +65,9 @@ void GlobalDataHolder::loadImageList(std::string filename)
 void GlobalDataHolder::loadXml(std::string filename)
 {
 	m_imgInfos.clear();
-	std::string tmp;
-	ldp::fileparts(filename, m_rootPath, tmp, tmp);
+	std::string xmlname, ext;
+	ldp::fileparts(filename, m_rootPath, xmlname, ext);
+	m_xmlExportPureName = xmlname + ext;
 	TiXmlDocument doc;
 	CHECK_FILE(doc.LoadFile(filename.c_str()), filename);
 	for (auto doc_iter = doc.FirstChildElement(); doc_iter; doc_iter = doc_iter->NextSiblingElement())
