@@ -51,7 +51,10 @@ void GlobalDataHolder::loadImageList(std::string filename)
 			std::getline(fstm_s, lineBuffer);
 		for (auto img : imgs)
 			info.addImage(img);
-		m_imgInfos.push_back(info);
+		if (info.getBaseName() != "")
+		{
+			m_imgInfos.push_back(info);
+		}
 		m_curIndex = 0;
 		m_curIndex_imgIndex = 0;
 	} while (!fstm_s.eof());
@@ -67,12 +70,7 @@ void GlobalDataHolder::loadXml(std::string filename)
 	for (auto doc_iter = doc.FirstChildElement(); doc_iter; doc_iter = doc_iter->NextSiblingElement())
 	{
 		PatternImageInfo info;
-		info.fromXml(doc_iter);
-		std::vector<std::string> imgs;
-		ldp::getAllFilesInDir(ldp::fullfile(m_rootPath, info.getBaseName()), imgs, "jpg");
-		ldp::getAllFilesInDir(ldp::fullfile(m_rootPath, info.getBaseName()), imgs, "png");
-		for (auto img : imgs)
-			info.addImage(img);
+		info.fromXml(m_rootPath, doc_iter);
 		m_imgInfos.push_back(info);
 	} // end for doc_iter
 }

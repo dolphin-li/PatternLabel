@@ -11,6 +11,7 @@ public:
 	PatternImageInfo();
 	~PatternImageInfo();
 
+	void clear();
 	int numImages()const;
 	std::string getImageName(int i)const;
 	void clearImages();
@@ -22,7 +23,7 @@ public:
 	std::string getAttributeType(const std::string& typeName)const;
 	void setAttributeType(const std::string& typeName, const std::string& type);
 	void toXml(TiXmlNode* parent)const;
-	void fromXml(TiXmlElement* parent);
+	void fromXml(std::string rootFolder, TiXmlElement* parent);
 public:
 	static bool initialized() { return s_mapInitialized; }
 	static int numAttributes() { return (int)s_typeSet.size(); }

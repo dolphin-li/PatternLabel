@@ -1,4 +1,5 @@
 #include "PatternImageInfo.h"
+#include "util.h"
 PatternImageInfo::PatternImageInfo()
 {
 	setDefaultTypes();
@@ -7,6 +8,12 @@ PatternImageInfo::PatternImageInfo()
 PatternImageInfo::~PatternImageInfo()
 {
 
+}
+
+void PatternImageInfo::clear()
+{
+	m_imgNames.clear();
+	setDefaultTypes();
 }
 
 int PatternImageInfo::numImages()const
@@ -89,6 +96,14 @@ void PatternImageInfo::toXml(TiXmlNode* parent)const
 	TiXmlElement* url = new TiXmlElement("url");
 	parent->LinkEndChild(url);
 	url->SetAttribute("value", m_url.c_str());
+	for (auto name : m_imgNames)
+	{
+		std::string p, n, e;
+		ldp::fileparts(name, p, n, e);
+		TiXmlElement* img = new TiXmlElement("image");
+		parent->LinkEndChild(img);
+		img->SetAttribute("value", (n + e).c_str());
+	}
 	for (const auto& iter : m_types)
 	{
 		TiXmlElement* ele = new TiXmlElement(iter.first.c_str());
@@ -97,8 +112,9 @@ void PatternImageInfo::toXml(TiXmlNode* parent)const
 	} // m_types
 }
 
-void PatternImageInfo::fromXml(TiXmlElement* parent)
+void PatternImageInfo::fromXml(std::string rootFolder, TiXmlElement* parent)
 {
+	clear();
 	for (auto p_iter = parent->FirstChildElement(); p_iter; p_iter = p_iter->NextSiblingElement())
 	{
 		std::string name = p_iter->Value();
@@ -106,7 +122,13 @@ void PatternImageInfo::fromXml(TiXmlElement* parent)
 		if (name == "url")
 			m_url = att;
 		else if (name == "baseName")
+		{
 			m_baseName = att;
+		}
+		else if (name == "image")
+		{
+			addImage(att);
+		}
 		else for (auto& type : m_types)
 		{
 			if (name == type.first)
@@ -119,6 +141,11 @@ void PatternImageInfo::fromXml(TiXmlElement* parent)
 			} // end if name
 		} // end for type
 	} // end for p_iter
+
+	for (auto& img : m_imgNames)
+	{
+		img = ldp::fullfile(ldp::fullfile(rootFolder, m_baseName), img);
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
