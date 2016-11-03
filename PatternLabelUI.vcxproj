@@ -93,14 +93,14 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PreprocessorDefinitions>UNICODE;WIN32;WIN64;QT_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_OPENGL_LIB;QT_WIDGETS_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\algorithm\ldpMat;$(ProjectDir)\algorithm;.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <OutputFile>$(OutDir)\$(ProjectName)d.exe</OutputFile>
       <AdditionalLibraryDirectories>$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -126,13 +126,13 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PreprocessorDefinitions>UNICODE;WIN32;WIN64;QT_DLL;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_GUI_LIB;QT_OPENGL_LIB;QT_WIDGETS_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\algorithm\ldpMat;$(ProjectDir)\algorithm;.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat />
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -140,6 +140,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="algorithm\conv\ConvolutionPyramid.cpp" />
+    <ClCompile Include="algorithm\conv\Convolution_Helper.cpp" />
+    <ClCompile Include="algorithm\conv\ImageData.cpp" />
+    <ClCompile Include="algorithm\global_data_holder.cpp" />
+    <ClCompile Include="algorithm\PatternImageInfo.cpp" />
+    <ClCompile Include="algorithm\qimdebug.cpp" />
+    <ClCompile Include="algorithm\tinyxml\tinystr.cpp" />
+    <ClCompile Include="algorithm\tinyxml\tinyxml.cpp" />
+    <ClCompile Include="algorithm\tinyxml\tinyxmlerror.cpp" />
+    <ClCompile Include="algorithm\tinyxml\tinyxmlparser.cpp" />
+    <ClCompile Include="algorithm\util.cpp" />
     <ClCompile Include="GeneratedFiles\Debug\moc_patternlabelui.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -168,6 +179,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="ImageViewer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="patternlabelui.cpp" />
   </ItemGroup>
@@ -212,7 +224,22 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="algorithm\conv\ConvolutionPyramid.h" />
+    <ClInclude Include="algorithm\conv\Convolution_Helper.h" />
+    <ClInclude Include="algorithm\conv\ImageData.h" />
+    <ClInclude Include="algorithm\global_data_holder.h" />
+    <ClInclude Include="algorithm\ldpMat\half.hpp" />
+    <ClInclude Include="algorithm\ldpMat\ldpdef.h" />
+    <ClInclude Include="algorithm\ldpMat\ldp_basic_mat.h" />
+    <ClInclude Include="algorithm\ldpMat\ldp_basic_vec.h" />
+    <ClInclude Include="algorithm\ldpMat\Quaternion.h" />
+    <ClInclude Include="algorithm\PatternImageInfo.h" />
+    <ClInclude Include="algorithm\qimdebug.h" />
+    <ClInclude Include="algorithm\tinyxml\tinystr.h" />
+    <ClInclude Include="algorithm\tinyxml\tinyxml.h" />
+    <ClInclude Include="algorithm\util.h" />
     <ClInclude Include="GeneratedFiles\ui_patternlabelui.h" />
+    <ClInclude Include="ImageViewer.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="patternlabelui.qrc">

@@ -5,10 +5,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;cxx;c;def</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h</Extensions>
-    </Filter>
     <Filter Include="Form Files">
       <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
       <Extensions>ui</Extensions>
@@ -33,6 +29,18 @@
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
+    <Filter Include="algorithm">
+      <UniqueIdentifier>{5d1aceb6-b004-4ce2-886b-38d2827a5927}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="algorithm\tinyxml">
+      <UniqueIdentifier>{f58ada6b-feb1-4787-a997-aee159d8f616}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="algorithm\ldpmat">
+      <UniqueIdentifier>{c2aed9cc-40a3-4ba6-973d-5debd4879049}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="algorithm\conv">
+      <UniqueIdentifier>{6f0295c9-41d5-42b2-9b47-08acf0a18381}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -53,11 +61,44 @@
     <ClCompile Include="GeneratedFiles\qrc_style.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
+    <ClCompile Include="algorithm\global_data_holder.cpp">
+      <Filter>algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qimdebug.cpp">
+      <Filter>algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\util.cpp">
+      <Filter>algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\tinyxml\tinystr.cpp">
+      <Filter>algorithm\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\tinyxml\tinyxml.cpp">
+      <Filter>algorithm\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\tinyxml\tinyxmlerror.cpp">
+      <Filter>algorithm\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\tinyxml\tinyxmlparser.cpp">
+      <Filter>algorithm\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageViewer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\conv\Convolution_Helper.cpp">
+      <Filter>algorithm\conv</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\conv\ConvolutionPyramid.cpp">
+      <Filter>algorithm\conv</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\conv\ImageData.cpp">
+      <Filter>algorithm\conv</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\PatternImageInfo.cpp">
+      <Filter>algorithm</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="patternlabelui.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="patternlabelui.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
@@ -67,10 +108,58 @@
     <CustomBuild Include="qdarkstyle\style.qrc">
       <Filter>Resource Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="patternlabelui.h">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_patternlabelui.h">
       <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\global_data_holder.h">
+      <Filter>algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qimdebug.h">
+      <Filter>algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\util.h">
+      <Filter>algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\tinyxml\tinystr.h">
+      <Filter>algorithm\tinyxml</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\tinyxml\tinyxml.h">
+      <Filter>algorithm\tinyxml</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\ldpMat\half.hpp">
+      <Filter>algorithm\ldpmat</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\ldpMat\ldp_basic_mat.h">
+      <Filter>algorithm\ldpmat</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\ldpMat\ldp_basic_vec.h">
+      <Filter>algorithm\ldpmat</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\ldpMat\ldpdef.h">
+      <Filter>algorithm\ldpmat</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\ldpMat\Quaternion.h">
+      <Filter>algorithm\ldpmat</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageViewer.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\conv\Convolution_Helper.h">
+      <Filter>algorithm\conv</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\conv\ConvolutionPyramid.h">
+      <Filter>algorithm\conv</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\conv\ImageData.h">
+      <Filter>algorithm\conv</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\PatternImageInfo.h">
+      <Filter>algorithm</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
