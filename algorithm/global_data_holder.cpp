@@ -14,6 +14,31 @@ void GlobalDataHolder::init()
 	m_curIndex = -1;
 	m_curIndex_imgIndex = -1;
 	m_xmlExportPureName = "patterns.xml";
+	m_lastRun_RootDir = "//dongping-pc1/d/dongping/BodyReconstruct/sewingPatterns/burdastyle_data";
+	m_lastRun_imgId = 0;
+	loadLastRunInfo();
+}
+
+void GlobalDataHolder::loadLastRunInfo()
+{
+	std::ifstream stm("__lastruninfo.txt");
+	if (stm.fail())
+		return;
+	std::getline(stm, m_lastRun_RootDir);
+	stm >> m_lastRun_imgId;
+	if (m_lastRun_imgId < 0)
+		m_lastRun_imgId = 0;
+	stm.close();
+}
+
+void GlobalDataHolder::saveLastRunInfo()const
+{
+	std::ofstream stm("__lastruninfo.txt");
+	if (stm.fail())
+		return;
+	stm << m_lastRun_RootDir << std::endl;
+	stm << m_lastRun_imgId << std::endl;
+	stm.close();
 }
 
 void GlobalDataHolder::loadImageList(std::string filename)
@@ -60,6 +85,12 @@ void GlobalDataHolder::loadImageList(std::string filename)
 		m_curIndex = 0;
 		m_curIndex_imgIndex = 0;
 	} while (!fstm_s.eof());
+
+	if (ldp::validWindowsPath(m_rootPath) != ldp::validWindowsPath(m_lastRun_RootDir))
+	{
+		m_lastRun_RootDir = m_rootPath;
+		m_lastRun_imgId = 0;
+	}
 }
 
 void GlobalDataHolder::loadXml(std::string filename)
@@ -74,8 +105,15 @@ void GlobalDataHolder::loadXml(std::string filename)
 	{
 		PatternImageInfo info;
 		info.fromXml(m_rootPath, doc_iter);
-		m_imgInfos.push_back(info);
+		if (info.getBaseName() != "")
+			m_imgInfos.push_back(info);
 	} // end for doc_iter
+
+	if (ldp::validWindowsPath(m_rootPath) != ldp::validWindowsPath(m_lastRun_RootDir))
+	{
+		m_lastRun_RootDir = m_rootPath;
+		m_lastRun_imgId = 0;
+	}
 }
 
 void GlobalDataHolder::saveXml(std::string filename)const
@@ -90,4 +128,6 @@ void GlobalDataHolder::saveXml(std::string filename)const
 	} // end for info
 
 	CHECK_FILE(doc.SaveFile(filename.c_str()), filename);
+
+	saveLastRunInfo();
 }

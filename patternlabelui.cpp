@@ -6,8 +6,6 @@
 #include <QRadioButton>
 #include <QGridLayout>
 
-const static char* g_default_folder = "//dongping-pc1/d/dongping/BodyReconstruct/sewingPatterns/burdastyle_data";
-
 PatternLabelUI::PatternLabelUI(QWidget *parent)
 	: QMainWindow(parent)
 {
@@ -35,12 +33,15 @@ void PatternLabelUI::on_actionLoad_image_list_triggered()
 {
 	try
 	{
-		QString name = QFileDialog::getOpenFileName(this, "load image list", g_default_folder, "*.txt");
+		QString name = QFileDialog::getOpenFileName(this, "load image list", g_dataholder.m_lastRun_RootDir.c_str(), "*.txt");
 		if (name.isEmpty())
 			return;
 		g_dataholder.loadImageList(name.toStdString());
 		ui.sbCurIndex->setMaximum(g_dataholder.m_imgInfos.size());
-		updateByIndex(0, 0);
+		updateByIndex(g_dataholder.m_lastRun_imgId, 0);
+		m_updateSbIndex = false;
+		ui.sbCurIndex->setValue(g_dataholder.m_curIndex);
+		m_updateSbIndex = true;
 	} catch (std::exception e)
 	{
 		std::cout << e.what() << std::endl;
@@ -54,12 +55,15 @@ void PatternLabelUI::on_actionLoad_xml_triggered()
 {
 	try
 	{
-		QString name = QFileDialog::getOpenFileName(this, "load xml", g_default_folder, "*.xml");
+		QString name = QFileDialog::getOpenFileName(this, "load xml", g_dataholder.m_lastRun_RootDir.c_str(), "*.xml");
 		if (name.isEmpty())
 			return;
 		g_dataholder.loadXml(name.toStdString());
 		ui.sbCurIndex->setMaximum(g_dataholder.m_imgInfos.size());
-		updateByIndex(0, 0);
+		updateByIndex(g_dataholder.m_lastRun_imgId, 0);
+		m_updateSbIndex = false;
+		ui.sbCurIndex->setValue(g_dataholder.m_curIndex);
+		m_updateSbIndex = true;
 	} catch (std::exception e)
 	{
 		std::cout << e.what() << std::endl;
@@ -89,7 +93,7 @@ void PatternLabelUI::on_actionSave_xml_triggered()
 {
 	try
 	{
-		QString name = QFileDialog::getOpenFileName(this, "load xml", g_default_folder, "*.xml");
+		QString name = QFileDialog::getOpenFileName(this, "load xml", g_dataholder.m_lastRun_RootDir.c_str(), "*.xml");
 		if (name.isEmpty())
 			return;
 		if (!name.endsWith(".xml"))
@@ -177,6 +181,7 @@ void PatternLabelUI::updateByIndex(int index, int imgId)
 	if (g_dataholder.m_curIndex >= 0 && g_dataholder.m_curIndex_imgIndex >= 0)
 		g_dataholder.saveXml(ldp::fullfile(g_dataholder.m_rootPath, g_dataholder.m_xmlExportPureName));
 	g_dataholder.m_curIndex = (index + g_dataholder.m_imgInfos.size()) % g_dataholder.m_imgInfos.size();
+	g_dataholder.m_lastRun_imgId = g_dataholder.m_curIndex;
 	const auto& info = g_dataholder.m_imgInfos.at(g_dataholder.m_curIndex);
 	g_dataholder.m_curIndex_imgIndex = (imgId + info.numImages()) % info.numImages();
 	QImage img(info.getImageName(g_dataholder.m_curIndex_imgIndex).c_str());

@@ -86,7 +86,10 @@ void PatternImageInfo::toXml(TiXmlNode* parent)const
 	for (size_t i = 0; i < baseName.size(); i++)
 	{
 		if (baseName[i] == ' ' || baseName[i] == '(' || baseName[i] == ')'
-			|| baseName[i] == '\'' || baseName[i] == '\"')
+			|| baseName[i] == '\'' || baseName[i] == '\"' || baseName[i] == '&'
+			|| baseName[i] == '#' || baseName[i] == '%' || baseName[i] == '@'
+			|| baseName[i] == '!' || baseName[i] == '*' || baseName[i] == '$'
+			|| baseName[i] == '^' || baseName[i] == '+')
 			baseName[i] = '-';
 	}
 	parent->SetValue(baseName.c_str());
@@ -136,8 +139,9 @@ void PatternImageInfo::fromXml(std::string rootFolder, TiXmlElement* parent)
 				auto& types = attributeTypes(type.first);
 				auto iter = std::find(types.begin(), types.end(), att);
 				if (iter == types.end())
-					throw std::exception(("error: invalid type" + att).c_str());
-				type.second = int(iter - types.begin());
+					printf("warning: invalid type %s\n", att.c_str());
+				else
+					type.second = int(iter - types.begin());
 			} // end if name
 		} // end for type
 	} // end for p_iter
