@@ -28,6 +28,11 @@ public:
 	bool fromXml(QString rootFolder, QXmlStreamReader& reader);
 	bool toXml(TiXmlNode* writer)const;
 	bool fromXml(QString rootFolder, TiXmlElement* reader);
+
+	void setJdId(const QString& s) { m_jdId = s; }
+	QString getJdId()const { return m_jdId; }
+	void setJdTitle(const QString& s) { m_jdTitle = s; }
+	QString getJdTitle()const { return m_jdTitle; }
 public:
 	static bool initialized() { return s_mapInitialized; }
 	static int numAttributes() { return (int)s_typeSet.size(); }
@@ -48,4 +53,9 @@ private:
 	static bool s_mapInitialized;
 	// E.G., cloth types, collar types, ...
 	static QMap<QString, QVector<QString>> s_typeSet;
+
+	/// for jd images
+	QString m_jdTitle;
+	QString m_jdId;
+	static QMap<QString, QMap<QString, QString>> s_jd2typeMap;
 };

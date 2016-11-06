@@ -2,7 +2,7 @@
 
 #include <fstream>
 #include <sstream>
-#include "libxl.h"
+#include "qtxlsx\xlsxdocument.h"
 #include <qxml.h>
 #include <qxmlstream.h>
 #include <QFile>
@@ -14,7 +14,9 @@ if (!(result))\
 #define CHECK_FILE_EXIST(result, filename) \
 if (!(result))\
 	throw std::exception(("file not exist: " + filename).toStdString().c_str());
-
+#define CHECK_BOOL(cond)\
+if (!(cond))\
+	throw std::exception((std::string("CHECK failed: ") + #cond).c_str());
 GlobalDataHolder g_dataholder;
 
 void GlobalDataHolder::init()
@@ -134,10 +136,56 @@ void GlobalDataHolder::saveXml(QString filename)const
 	saveLastRunInfo();
 }
 
+inline QString findAppropriateJdImgPath(QString root, QString xlslName, QString imgName)
+{
+	const static int nExts = 1;
+	const static QString exts[nExts] = {
+		".jpg"
+		//, ".png"
+	};
+	for (int iExt = 0; iExt < nExts; iExt++)
+	{
+		QFileInfo info;
+		QDir dir;
+		dir = QDir::cleanPath(root + QDir::separator() + xlslName);
+		info.setFile(dir, imgName + exts[iExt]);
+		if (info.exists())
+			return info.absoluteFilePath();
+		dir = QDir::cleanPath(root + QDir::separator() + xlslName + QDir::separator() + "images");
+		info.setFile(dir, imgName + exts[iExt]);
+		if (info.exists())
+			return info.absoluteFilePath();
+		dir = QDir::cleanPath(root + QDir::separator() + "images");
+		info.setFile(dir, imgName + exts[iExt]);
+		if (info.exists())
+			return info.absoluteFilePath();
+	}
+	return "";
+}
+
+inline QString jdImage2IdMask(QString img)
+{
+	QFileInfo info(img);
+	QDir dir(img);
+	QFileInfo info1(dir.absoluteFilePath(info.baseName() + "_label.png"));
+	if (info1.exists())
+		return info1.absoluteFilePath();
+	return "";
+}
+
+inline QString jdBasename(QString imgFullName, QString root)
+{
+	QFileInfo info(imgFullName);
+	return info.absolutePath().right(info.absolutePath().size() - root.size());
+}
+
 void GlobalDataHolder::loadJdImageList(QString filename)
 {
 	m_imgInfos.clear();	
 	QFileInfo finfo(filename);
+	if (!finfo.baseName().toLower().endsWith("_imgid"))
+		throw std::exception("xlsx file must be ends with \"_imgid\"");
+	QString imgRelFolder = finfo.baseName().left(finfo.baseName().size()-6);
 	m_xmlExportPureName = finfo.baseName() + ".xml";
 	m_rootPath = finfo.absolutePath();
 	QFileInfo rinfo(m_rootPath), linfo(m_lastRun_RootDir);
@@ -148,7 +196,52 @@ void GlobalDataHolder::loadJdImageList(QString filename)
 	}
 	
 	// load xlsx
-	libxl::IBookT<TCHAR>* book = xlCreateXMLBookW();
+	QXlsx::Document doc(filename);
+	QXlsx::Worksheet* sheet = (QXlsx::Worksheet*)doc.sheet("Sheet1");
+	if (!sheet)
+		throw std::exception("no valid Sheet1");
+		
+	const int fr = sheet->dimension().firstRow();
+	const int lr = sheet->dimension().lastRow();
+	const int fc = sheet->dimension().firstColumn();
+	const int lc = sheet->dimension().lastColumn();
+	if (lc - fc + 1 != 5)
+		throw std::exception("xlsx: cols must be 5");
+	PatternImageInfo* curInfo = nullptr;
+	QVector<QString> values(lc-fc+1, "");
+	for (int row = fr + 1; row < lr; ++row)
+	{
+		values.fill("");
+		for (int col = fc; col <= lc; col++)
+		{
+			auto cell = sheet->cellAt(row, col);
+			if (cell)
+				values[col-fc] = cell->value().toString();
+		}
+		if (values[0].isEmpty())
+		{
+
+		} // end if empty value0
+		else
+		{
+			QString img = findAppropriateJdImgPath(m_rootPath, imgRelFolder, values[4]);
+			if (!img.isEmpty())
+			{
+				m_imgInfos.push_back(PatternImageInfo());
+				curInfo = &m_imgInfos.back();
+				curInfo->setJdTitle(values[0]);
+				curInfo->setJdId(values[1]);
+				curInfo->setUrl(values[2]);
+				curInfo->addImage(img);
+				curInfo->setBaseName(jdBasename(img, m_rootPath));
+				auto mask = jdImage2IdMask(img);
+				if (!mask.isEmpty())
+					curInfo->addImage(mask);
+			}
+			else
+				curInfo = nullptr;
+		} // end else not empty value0
+	} // end for row
 }
 
 bool GlobalDataHolder::loadXml_tixml(QString filename)

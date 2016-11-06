@@ -71,7 +71,7 @@ void PatternLabelUI::on_actionLoad_jd_image_list_triggered()
 	try
 	{
 		QString name = QFileDialog::getOpenFileName(this, "load jd image list",
-			g_dataholder.m_lastRun_RootDir, "*.xlsx");
+			g_dataholder.m_lastRun_RootDir, "*_imgId.xlsx");
 		if (name.isEmpty())
 			return;
 		g_dataholder.loadJdImageList(name);

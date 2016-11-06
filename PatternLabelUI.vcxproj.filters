@@ -41,6 +41,9 @@
     <Filter Include="algorithm\conv">
       <UniqueIdentifier>{6f0295c9-41d5-42b2-9b47-08acf0a18381}</UniqueIdentifier>
     </Filter>
+    <Filter Include="algorithm\qtxlsx">
+      <UniqueIdentifier>{c7cb4977-2252-4825-a04b-803dd7c17041}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -97,6 +100,102 @@
     <ClCompile Include="algorithm\PatternImageInfo.cpp">
       <Filter>algorithm</Filter>
     </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxabstractooxmlfile.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxabstractsheet.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxcell.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxcellformula.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxcellrange.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxcellreference.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxchart.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxchartsheet.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxcolor.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxconditionalformatting.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxcontenttypes.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxdatavalidation.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxdocpropsapp.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxdocpropscore.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxdocument.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxdrawing.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxdrawinganchor.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxformat.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxmediafile.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxnumformatparser.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxrelationships.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxrichstring.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxsharedstrings.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxsimpleooxmlfile.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxstyles.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxtheme.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxutility.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxworkbook.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxworksheet.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxzipreader.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithm\qtxlsx\xlsxzipwriter.cpp">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_xlsxdocument.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="patternlabelui.ui">
@@ -110,6 +209,9 @@
     </CustomBuild>
     <CustomBuild Include="patternlabelui.h">
       <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="algorithm\qtxlsx\xlsxdocument.h">
+      <Filter>algorithm\qtxlsx</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
@@ -160,6 +262,138 @@
     </ClInclude>
     <ClInclude Include="algorithm\PatternImageInfo.h">
       <Filter>algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxabstractooxmlfile.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxabstractooxmlfile_p.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxabstractsheet.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxabstractsheet_p.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxcell.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxcell_p.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxcellformula.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxcellformula_p.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxcellrange.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxcellreference.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxchart.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxchart_p.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxchartsheet.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxchartsheet_p.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxcolor_p.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxconditionalformatting.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxconditionalformatting_p.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxcontenttypes_p.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxdatavalidation.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxdatavalidation_p.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxdocpropsapp_p.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxdocpropscore_p.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxdocument_p.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxdrawing_p.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxdrawinganchor_p.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxformat.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxformat_p.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxglobal.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxmediafile_p.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxnumformatparser_p.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxrelationships_p.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxrichstring.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxrichstring_p.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxsharedstrings_p.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxsimpleooxmlfile_p.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxstyles_p.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxtheme_p.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxutility_p.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxworkbook.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxworkbook_p.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxworksheet.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxworksheet_p.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxzipreader_p.h">
+      <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm\qtxlsx\xlsxzipwriter_p.h">
+      <Filter>algorithm\qtxlsx</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

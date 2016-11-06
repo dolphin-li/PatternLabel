@@ -85,7 +85,12 @@ void PatternImageInfo::setDefaultTypes()
 bool PatternImageInfo::toXml(QXmlStreamWriter& writer)const
 {
 	writer.writeStartElement("pattern");
-	writer.writeAttribute("name", getBaseName());
+	if (!getBaseName().isEmpty())
+		writer.writeAttribute("name", getBaseName());
+	if (!m_jdId.isEmpty())
+		writer.writeAttribute("jdId", getJdId());
+	if (!m_jdTitle.isEmpty())
+		writer.writeTextElement("jdTitle", getJdTitle());
 	writer.writeTextElement("url", getUrl());
 	for (auto name : m_imgNames)
 	{
@@ -93,9 +98,7 @@ bool PatternImageInfo::toXml(QXmlStreamWriter& writer)const
 		writer.writeTextElement("image", finfo.fileName());
 	}
 	for (auto iter = m_types.begin(); iter != m_types.end(); ++iter)
-	{
 		writer.writeTextElement(iter.key(), getAttributeType(iter.key()));
-	}
 	writer.writeEndElement();
 	if (writer.hasError())
 		return false;
@@ -128,10 +131,9 @@ bool PatternImageInfo::fromXml(QString rootFolder, QXmlStreamReader& reader)
 				for (auto v : reader.attributes())
 				{
 					if (v.name() == "name")
-					{
 						m_baseName = v.value().toString();
-						break;
-					}
+					else if (v.name() == "jdId")
+						m_jdId = v.value().toString();
 				} // end for v
 			} // end if n == pattern
 			else if (n == "image")
@@ -141,6 +143,14 @@ bool PatternImageInfo::fromXml(QString rootFolder, QXmlStreamReader& reader)
 			else if (n == "url")
 			{
 				m_url = reader.readElementText();
+			}
+			else if (n == "jdId")
+			{
+				m_jdId = reader.readElementText();
+			}
+			else if (n == "jdTitle")
+			{
+				m_jdTitle = reader.readElementText();
 			}
 			else
 			{

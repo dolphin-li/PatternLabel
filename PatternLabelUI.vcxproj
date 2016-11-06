@@ -34,10 +34,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -92,8 +94,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PreprocessorDefinitions>UNICODE;WIN32;WIN64;QT_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_XML_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)\algorithm\ldpMat;$(ProjectDir)\algorithm\libxl\include_cpp;$(ProjectDir)\algorithm;.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtXml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>XLSX_NO_LIB;UNICODE;WIN32;WIN64;QT_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_XML_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(QtDir)\include\QtGui\5.3.1\QtGui;$(ProjectDir)\algorithm\ldpMat;$(ProjectDir)\algorithm\libxl\include_cpp;$(ProjectDir)\algorithm;.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtXml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -104,7 +106,7 @@
       <OutputFile>$(OutDir)\$(ProjectName)d.exe</OutputFile>
       <AdditionalLibraryDirectories>$(ProjectDir)\algorithm\libxl\lib64;$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libxl.lib;qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5OpenGLd.lib;opengl32.lib;glu32.lib;Qt5Widgetsd.lib;Qt5Xmld.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5OpenGLd.lib;opengl32.lib;glu32.lib;Qt5Widgetsd.lib;Qt5Xmld.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -125,8 +127,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PreprocessorDefinitions>UNICODE;WIN32;WIN64;QT_DLL;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_GUI_LIB;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_XML_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)\algorithm\ldpMat;$(ProjectDir)\algorithm\libxl\include_cpp;$(ProjectDir)\algorithm;.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtXml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>XLSX_NO_LIB;UNICODE;WIN32;WIN64;QT_DLL;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_GUI_LIB;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_XML_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(QtDir)\include\QtGui\5.3.1\QtGui;$(ProjectDir)\algorithm\ldpMat;$(ProjectDir)\algorithm\libxl\include_cpp;$(ProjectDir)\algorithm;.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtXml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat />
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
@@ -136,7 +138,7 @@
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>$(ProjectDir)\algorithm\libxl\lib64;$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>libxl.lib;qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5OpenGL.lib;opengl32.lib;glu32.lib;Qt5Widgets.lib;Qt5Xml.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5OpenGL.lib;opengl32.lib;glu32.lib;Qt5Widgets.lib;Qt5Xml.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -146,6 +148,37 @@
     <ClCompile Include="algorithm\global_data_holder.cpp" />
     <ClCompile Include="algorithm\PatternImageInfo.cpp" />
     <ClCompile Include="algorithm\qimdebug.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxabstractooxmlfile.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxabstractsheet.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxcell.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxcellformula.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxcellrange.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxcellreference.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxchart.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxchartsheet.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxcolor.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxconditionalformatting.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxcontenttypes.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxdatavalidation.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxdocpropsapp.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxdocpropscore.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxdocument.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxdrawing.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxdrawinganchor.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxformat.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxmediafile.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxnumformatparser.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxrelationships.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxrichstring.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxsharedstrings.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxsimpleooxmlfile.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxstyles.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxtheme.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxutility.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxworkbook.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxworksheet.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxzipreader.cpp" />
+    <ClCompile Include="algorithm\qtxlsx\xlsxzipwriter.cpp" />
     <ClCompile Include="algorithm\tinyxml\tinystr.cpp" />
     <ClCompile Include="algorithm\tinyxml\tinyxml.cpp" />
     <ClCompile Include="algorithm\tinyxml\tinyxmlerror.cpp" />
@@ -179,6 +212,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_xlsxdocument.cpp" />
     <ClCompile Include="ImageViewer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="patternlabelui.cpp" />
@@ -235,6 +269,68 @@
     <ClInclude Include="algorithm\ldpMat\Quaternion.h" />
     <ClInclude Include="algorithm\PatternImageInfo.h" />
     <ClInclude Include="algorithm\qimdebug.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxabstractooxmlfile.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxabstractooxmlfile_p.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxabstractsheet.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxabstractsheet_p.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxcell.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxcellformula.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxcellformula_p.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxcellrange.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxcellreference.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxcell_p.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxchart.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxchartsheet.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxchartsheet_p.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxchart_p.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxcolor_p.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxconditionalformatting.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxconditionalformatting_p.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxcontenttypes_p.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxdatavalidation.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxdatavalidation_p.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxdocpropsapp_p.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxdocpropscore_p.h" />
+    <CustomBuild Include="algorithm\qtxlsx\xlsxdocument.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing xlsxdocument.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing xlsxdocument.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_UNICODE "-I$(ProjectDir)\algorithm\ldpMat" "-I$(ProjectDir)\algorithm\libxl\include_cpp" "-I$(ProjectDir)\algorithm" "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing xlsxdocument.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing xlsxdocument.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_UNICODE "-I$(ProjectDir)\algorithm\ldpMat" "-I$(ProjectDir)\algorithm\libxl\include_cpp" "-I$(ProjectDir)\algorithm" "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml"</Command>
+    </CustomBuild>
+    <ClInclude Include="algorithm\qtxlsx\xlsxdocument_p.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxdrawinganchor_p.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxdrawing_p.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxformat.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxformat_p.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxglobal.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxmediafile_p.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxnumformatparser_p.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxrelationships_p.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxrichstring.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxrichstring_p.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxsharedstrings_p.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxsimpleooxmlfile_p.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxstyles_p.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxtheme_p.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxutility_p.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxworkbook.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxworkbook_p.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxworksheet.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxworksheet_p.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxzipreader_p.h" />
+    <ClInclude Include="algorithm\qtxlsx\xlsxzipwriter_p.h" />
     <ClInclude Include="algorithm\tinyxml\tinystr.h" />
     <ClInclude Include="algorithm\tinyxml\tinyxml.h" />
     <ClInclude Include="algorithm\util.h" />
