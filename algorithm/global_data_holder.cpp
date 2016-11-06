@@ -3,10 +3,17 @@
 #include <fstream>
 #include <sstream>
 #include "libxl.h"
-
+#include <qxml.h>
+#include <qxmlstream.h>
+#include <QFile>
+#include <QFileInfo>
+#include <qdir.h>
 #define CHECK_FILE(result, filename) \
 if (!(result))\
-	throw std::exception((std::string("open file error: ") + filename).c_str());
+	throw std::exception(("open file error: " + filename).toStdString().c_str());
+#define CHECK_FILE_EXIST(result, filename) \
+if (!(result))\
+	throw std::exception(("file not exist: " + filename).toStdString().c_str());
 
 GlobalDataHolder g_dataholder;
 
@@ -22,10 +29,12 @@ void GlobalDataHolder::init()
 
 void GlobalDataHolder::loadLastRunInfo()
 {
-	std::ifstream stm("__lastruninfo.txt");
+	std::wifstream stm(L"__lastruninfo.txt");
 	if (stm.fail())
 		return;
-	std::getline(stm, m_lastRun_RootDir);
+	std::wstring str;
+	std::getline(stm, str);
+	m_lastRun_RootDir = QString().fromStdWString(str);
 	stm >> m_lastRun_imgId;
 	if (m_lastRun_imgId < 0)
 		m_lastRun_imgId = 0;
@@ -34,51 +43,54 @@ void GlobalDataHolder::loadLastRunInfo()
 
 void GlobalDataHolder::saveLastRunInfo()const
 {
-	std::ofstream stm("__lastruninfo.txt");
+	std::wofstream stm(L"__lastruninfo.txt");
 	if (stm.fail())
 		return;
-	stm << m_lastRun_RootDir << std::endl;
+	stm << m_lastRun_RootDir.toStdWString() << std::endl;
 	stm << m_lastRun_imgId << std::endl;
 	stm.close();
 }
 
-void GlobalDataHolder::loadImageList(std::string filename)
+void GlobalDataHolder::loadImageList(QString filename)
 {
 	m_imgInfos.clear();
 
-	std::ifstream fstm_f(filename);
+	std::wifstream fstm_f(filename.toStdWString());
 	CHECK_FILE(!fstm_f.fail(), filename);
-	std::stringstream fstm_s;
-	std::copy(std::istreambuf_iterator<char>(fstm_f),
-		std::istreambuf_iterator<char>(),
-		std::ostreambuf_iterator<char>(fstm_s));
+	std::wstringstream fstm_s;
+	std::copy(std::istreambuf_iterator<wchar_t>(fstm_f),
+		std::istreambuf_iterator<wchar_t>(),
+		std::ostreambuf_iterator<wchar_t>(fstm_s));
 	fstm_f.close();
 	
-	std::string txtname, tmp;
-	ldp::fileparts(filename, m_rootPath, txtname, tmp);
-	m_xmlExportPureName = txtname + ".xml";
+	QFileInfo finfo(filename);
+	m_xmlExportPureName = finfo.baseName() + ".xml";
+	m_rootPath = finfo.absolutePath();
 
-	std::string lineBuffer;
+	std::wstring lineBuffer;
 	do
 	{
 		PatternImageInfo info;
 		std::getline(fstm_s, lineBuffer);
-		info.setBaseName(lineBuffer);
+		info.setBaseName(QString().fromStdWString(lineBuffer));
 		std::getline(fstm_s, lineBuffer);
-		info.setUrl(lineBuffer);
+		info.setUrl(QString().fromStdWString(lineBuffer));
 		std::getline(fstm_s, lineBuffer);
 		int nImgs = 0;
-		std::stringstream stm(lineBuffer);
+		std::wstringstream stm(lineBuffer);
 		stm >> nImgs;
-		std::vector<std::string> imgs;
-		ldp::getAllFilesInDir(ldp::fullfile(m_rootPath, info.getBaseName()), imgs, "jpg");
-		ldp::getAllFilesInDir(ldp::fullfile(m_rootPath, info.getBaseName()), imgs, "png");
+		std::vector<std::wstring> imgs;
+		ldp::getAllFilesInDir(ldp::fullfile(m_rootPath.toStdWString(), 
+			info.getBaseName().toStdWString()), imgs, L"jpg");
+		ldp::getAllFilesInDir(ldp::fullfile(m_rootPath.toStdWString(), 
+			info.getBaseName().toStdWString()), imgs, L"png");
 		if (nImgs != imgs.size())
-			printf("warning: size of %s not matched: %d vs %d\n", info.getBaseName().c_str(), nImgs, imgs.size());
+			wprintf(L"warning: size of %s not matched: %d vs %d\n", 
+			info.getBaseName().toStdWString().c_str(), nImgs, imgs.size());
 		for (int i = 0; i < nImgs; i++)
 			std::getline(fstm_s, lineBuffer);
 		for (auto img : imgs)
-			info.addImage(img);
+			info.addImage(QString().fromStdWString(img));
 		if (info.getBaseName() != "")
 		{
 			m_imgInfos.push_back(info);
@@ -87,61 +99,154 @@ void GlobalDataHolder::loadImageList(std::string filename)
 		m_curIndex_imgIndex = 0;
 	} while (!fstm_s.eof());
 
-	if (ldp::validWindowsPath(m_rootPath) != ldp::validWindowsPath(m_lastRun_RootDir))
+	QFileInfo rinfo(m_rootPath), linfo(m_lastRun_RootDir);
+	if (rinfo.absoluteDir() != linfo.absoluteDir())
 	{
 		m_lastRun_RootDir = m_rootPath;
 		m_lastRun_imgId = 0;
 	}
 }
 
-void GlobalDataHolder::loadXml(std::string filename)
+void GlobalDataHolder::loadXml(QString filename)
 {
 	m_imgInfos.clear();
-	std::string xmlname, ext;
-	ldp::fileparts(filename, m_rootPath, xmlname, ext);
-	m_xmlExportPureName = xmlname + ext;
+	QFileInfo finfo(filename);
+	m_xmlExportPureName = finfo.baseName() + ".xml";
+	m_rootPath = finfo.absolutePath();
+	if (!loadXml_qxml(filename))
+	{
+		CHECK_FILE(loadXml_tixml(filename), filename);
+		CHECK_FILE(saveXml_tixml(filename + ".backup"), filename);
+		CHECK_FILE(saveXml_qxml(filename), filename);
+	}
+
+	QFileInfo rinfo(m_rootPath), linfo(m_lastRun_RootDir);
+	if (rinfo.absoluteDir() != linfo.absoluteDir())
+	{
+		m_lastRun_RootDir = m_rootPath;
+		m_lastRun_imgId = 0;
+	}
+}
+
+void GlobalDataHolder::saveXml(QString filename)const
+{
+	CHECK_FILE(saveXml_qxml(filename), filename);
+	saveLastRunInfo();
+}
+
+void GlobalDataHolder::loadJdImageList(QString filename)
+{
+	m_imgInfos.clear();	
+	QFileInfo finfo(filename);
+	m_xmlExportPureName = finfo.baseName() + ".xml";
+	m_rootPath = finfo.absolutePath();
+	QFileInfo rinfo(m_rootPath), linfo(m_lastRun_RootDir);
+	if (rinfo.absoluteDir() != linfo.absoluteDir())
+	{
+		m_lastRun_RootDir = m_rootPath;
+		m_lastRun_imgId = 0;
+	}
+	
+	// load xlsx
+	libxl::IBookT<TCHAR>* book = xlCreateXMLBookW();
+}
+
+bool GlobalDataHolder::loadXml_tixml(QString filename)
+{
 	TiXmlDocument doc;
-	CHECK_FILE(doc.LoadFile(filename.c_str()), filename);
+	if (!doc.LoadFile(filename.toStdString().c_str()))
+		return false;
 	for (auto doc_iter = doc.FirstChildElement(); doc_iter; doc_iter = doc_iter->NextSiblingElement())
 	{
 		PatternImageInfo info;
-		info.fromXml(m_rootPath, doc_iter);
+		if (!info.fromXml(m_rootPath, doc_iter))
+		{
+			m_imgInfos.clear();
+			return false;
+		}
 		if (info.getBaseName() != "")
 			m_imgInfos.push_back(info);
 	} // end for doc_iter
-
-	if (ldp::validWindowsPath(m_rootPath) != ldp::validWindowsPath(m_lastRun_RootDir))
-	{
-		m_lastRun_RootDir = m_rootPath;
-		m_lastRun_imgId = 0;
-	}
+	return true;
 }
 
-void GlobalDataHolder::saveXml(std::string filename)const
+bool GlobalDataHolder::saveXml_tixml(QString filename)const
 {
 	TiXmlDocument doc;
 
 	for (const auto& info : m_imgInfos)
 	{
-		TiXmlElement* ele = new TiXmlElement(info.getBaseName().c_str());
+		TiXmlElement* ele = new TiXmlElement(info.getBaseName().toStdString().c_str());
 		doc.LinkEndChild(ele);
 		info.toXml(ele);
 	} // end for info
 
-	CHECK_FILE(doc.SaveFile(filename.c_str()), filename);
-
-	saveLastRunInfo();
+	if (!doc.SaveFile(filename.toStdString().c_str()))
+		return false;
+	return true;
 }
 
-void GlobalDataHolder::loadJdImageList(std::string filename)
+bool GlobalDataHolder::loadXml_qxml(QString filename)
 {
-	m_imgInfos.clear();
-	std::string txtname, tmp;
-	ldp::fileparts(filename, m_rootPath, txtname, tmp);
-	m_xmlExportPureName = txtname + ".xml";
-	if (ldp::validWindowsPath(m_rootPath) != ldp::validWindowsPath(m_lastRun_RootDir))
+	QFile file(filename);
+	if (!file.open(QIODevice::ReadOnly))
 	{
-		m_lastRun_RootDir = m_rootPath;
-		m_lastRun_imgId = 0;
+		wprintf(L"File not exist: %s\n", filename.toStdWString().c_str());
+		return false;
 	}
+	QXmlStreamReader reader(&file);
+	if (reader.hasError())
+	{
+		wprintf(L"read error [%s]: %s\n", filename.toStdWString().c_str(), 
+			reader.errorString().toStdWString().c_str());
+		return false;
+	}
+	reader.readNextStartElement();
+	if (reader.name() != "document")
+	{
+		wprintf(L"read error [%s]: %s\n", filename.toStdWString().c_str(),
+			L"root name must be <document>");
+		return false;
+	}
+	while (!reader.isEndDocument())
+	{
+		PatternImageInfo info;
+		info.fromXml(m_rootPath, reader);
+		if (info.getBaseName() != "")
+			m_imgInfos.push_back(info);
+		if (reader.hasError())
+		{
+			wprintf(L"read error [%s]: %s\n", filename.toStdWString().c_str(),
+				reader.errorString().toStdWString().c_str());
+			m_imgInfos.clear();
+			return false;
+		}
+	} // end for doc_iter
+
+	return true;
+}
+
+bool GlobalDataHolder::saveXml_qxml(QString filename)const
+{
+	QFile file(filename);
+	if (!file.open(QIODevice::WriteOnly))
+	{
+		wprintf(L"File not exist: %s\n", filename.toStdWString().c_str());
+		return false;
+	}
+	QXmlStreamWriter writer(&file);
+	writer.setAutoFormatting(true);
+	if (writer.hasError())
+		return false;
+	writer.writeStartDocument();
+	writer.writeStartElement("document");
+	for (const auto& info : m_imgInfos)
+	{
+		info.toXml(writer);
+		if (writer.hasError())
+			return false;
+	} // end for info
+	writer.writeEndElement();
+	writer.writeEndDocument();
+	return true;
 }

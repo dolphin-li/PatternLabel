@@ -1,9 +1,11 @@
 #pragma once
 
-#include <vector>
-#include <string>
-#include <map>
-#include <set>
+#include <QVector>
+#include <QString>
+#include <QMap>
+#include <QSet>
+#include <qxml.h>
+#include <qxmlstream.h>
 #include "tinyxml\tinyxml.h"
 class PatternImageInfo
 {
@@ -13,32 +15,37 @@ public:
 
 	void clear();
 	int numImages()const;
-	std::string getImageName(int i)const;
+	QString getImageName(int i)const;
 	void clearImages();
-	void addImage(const std::string& name);
-	void setBaseName(const std::string& name);
-	std::string getBaseName()const;
-	void setUrl(const std::string& url);
-	std::string getUrl()const;
-	std::string getAttributeType(const std::string& typeName)const;
-	void setAttributeType(const std::string& typeName, const std::string& type);
-	void toXml(TiXmlNode* parent)const;
-	void fromXml(std::string rootFolder, TiXmlElement* parent);
+	void addImage(const QString& name);
+	void setBaseName(const QString& name);
+	QString getBaseName()const;
+	void setUrl(const QString& url);
+	QString getUrl()const;
+	QString getAttributeType(const QString& typeName)const;
+	void setAttributeType(const QString& typeName, const QString& type);
+	bool toXml(QXmlStreamWriter& writer)const;
+	bool fromXml(QString rootFolder, QXmlStreamReader& reader);
+	bool toXml(TiXmlNode* writer)const;
+	bool fromXml(QString rootFolder, TiXmlElement* reader);
 public:
 	static bool initialized() { return s_mapInitialized; }
 	static int numAttributes() { return (int)s_typeSet.size(); }
-	static std::vector<std::string> attributeNames();
-	static const std::vector<std::string>& attributeTypes(const std::string& name);
+	static QVector<QString> attributeNames();
+	static const QVector<QString>& attributeTypes(const QString& name);
 protected:
 	static bool constructTypeMaps();
+	static bool constructTypeMaps_tixml(QString filename);
+	static bool constructTypeMaps_qxml(QString filename);
+	static bool constructTypeMaps_qxml_save(QString filename);
 	void setDefaultTypes();
 private:
-	std::string m_baseName;
-	std::string m_url;
-	std::vector<std::string> m_imgNames;
-	std::map<std::string, int> m_types;
+	QString m_baseName;
+	QString m_url;
+	QVector<QString> m_imgNames;
+	QMap<QString, int> m_types;
 
 	static bool s_mapInitialized;
 	// E.G., cloth types, collar types, ...
-	static std::map<std::string, std::vector<std::string>> s_typeSet;
+	static QMap<QString, QVector<QString>> s_typeSet;
 };

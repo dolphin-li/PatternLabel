@@ -53,6 +53,57 @@ namespace ldp
 		return true;
 	}
 
+	bool getAllFilesInDir(const std::wstring& path,
+		std::vector<std::wstring>& names, std::wstring ext)
+	{
+		if (ext.size())
+		{
+			if (ext[0] == '.')
+				ext = ext.substr(1, ext.length() - 1);
+		}
+
+		WIN32_FIND_DATAW fdFile;
+		HANDLE hFind = NULL;
+
+		//Specify a file mask. *.* = We want everything!
+		std::wstring sPathStr = ldp::fullfile(path, L"*.*");
+		sPathStr = ldp::validWindowsPath(sPathStr);
+
+		if ((hFind = FindFirstFileW(sPathStr.c_str(), &fdFile)) == INVALID_HANDLE_VALUE)
+		{
+			printf("Path not found: [%s]\n", path.c_str());
+			return false;
+		}
+
+		do
+		{
+			//Find first file will always return "."
+			//    and ".." as the first two directories.
+			if (lstrcmpW(fdFile.cFileName, L".") != 0
+				&& lstrcmpW(fdFile.cFileName, L"..") != 0)
+			{
+				//Build up our file path using the passed in
+				//  [sDir] and the file/foldername we just found:
+				sPathStr = ldp::fullfile(path, fdFile.cFileName);
+
+				//Is the entity a File or Folder?
+				if (fdFile.dwFileAttributes &FILE_ATTRIBUTE_DIRECTORY)
+				{
+					//printf("Directory: %s\n", sPathStr.c_str());
+					getAllFilesInDir(sPathStr.c_str(), names, ext); //Recursion, I love it!
+				}
+				else if (sPathStr.substr(sPathStr.size() - ext.size(), ext.size()) == ext || ext == L"*")
+				{
+					names.push_back(sPathStr);
+				}
+			}
+		} while (FindNextFileW(hFind, &fdFile)); //Find the next file.
+
+		FindClose(hFind); //Always, Always, clean things up!
+
+		return true;
+	}
+
 	void kmeansCenterPP(const Mat& data, std::vector<Vec>& _out_centers, int K, int trials=3)
 	{
 		const int N = data.cols();

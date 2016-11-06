@@ -9,21 +9,25 @@ class GlobalDataHolder
 public:
 	void init();
 
-	void loadImageList(std::string filename);
-	void loadJdImageList(std::string filename);
-	void loadXml(std::string filename);
-	void saveXml(std::string filename)const;
+	void loadImageList(QString filename);
+	void loadJdImageList(QString filename);
+	void loadXml(QString filename);
+	void saveXml(QString filename)const;
 protected:
 	void loadLastRunInfo();
 	void saveLastRunInfo()const;
+	bool loadXml_tixml(QString filename);
+	bool saveXml_tixml(QString filename)const;
+	bool loadXml_qxml(QString filename);
+	bool saveXml_qxml(QString filename)const;
 public:
 	std::vector<PatternImageInfo> m_imgInfos;
-	std::string m_rootPath;
+	QString m_rootPath;
 	int m_curIndex;
 	int m_curIndex_imgIndex;
-	std::string m_xmlExportPureName;
+	QString m_xmlExportPureName;
 
-	mutable std::string m_lastRun_RootDir;
+	mutable QString m_lastRun_RootDir;
 	mutable int m_lastRun_imgId;
 };
 

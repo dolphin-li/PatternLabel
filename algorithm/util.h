@@ -7,6 +7,8 @@
 #include "eigen\Dense"
 #include "eigen\SVD"
 #include "eigen\Sparse"
+#include <string>
+#include <codecvt>
 
 class ObjMesh;
 namespace ldp
@@ -115,6 +117,22 @@ namespace ldp
 			* ldp::QuaternionF().fromAngleAxis(xTheta, ldp::Float3(1, 0, 0));
 	}
 
+	inline std::wstring s2ws(std::string s)
+	{
+		using convert_typeX = std::codecvt_utf8<wchar_t>;
+		std::wstring_convert<convert_typeX, wchar_t> converterX;
+
+		return converterX.from_bytes(s);
+	}
+
+	inline std::string ws2s(const std::wstring& wstr)
+	{
+		using convert_typeX = std::codecvt_utf8<wchar_t>;
+		std::wstring_convert<convert_typeX, wchar_t> converterX;
+
+		return converterX.to_bytes(wstr);
+	}
+
 	inline std::string fullfile(std::string path, std::string name)
 	{
 		if (path == "")
@@ -129,11 +147,33 @@ namespace ldp
 		return path + name;
 	}
 
+	inline std::wstring fullfile(std::wstring path, std::wstring name)
+	{
+		if (path == L"")
+			return name;
+		if (path.back() != L'/' && path.back() != L'\\')
+			path.append(L"/");
+		if (path != L"" && name.size())
+		{
+			if (name[0] == L'/' || name[0] == L'\\')
+				name = name.substr(1, name.size() - 1);
+		}
+		return path + name;
+	}
+
 	inline std::string validWindowsPath(std::string oldpath)
 	{
 		for (int i = 0; i < oldpath.size(); i++)
 		if (oldpath[i] == '/')
 			oldpath[i] = '\\';
+		return oldpath;
+	}
+
+	inline std::wstring validWindowsPath(std::wstring oldpath)
+	{
+		for (int i = 0; i < oldpath.size(); i++)
+		if (oldpath[i] == L'/')
+			oldpath[i] = L'\\';
 		return oldpath;
 	}
 
@@ -145,9 +185,24 @@ namespace ldp
 			(dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
 	}
 
+	inline bool directoryExists(std::wstring path)
+	{
+		DWORD dwAttrib = GetFileAttributesW(path.c_str());
+
+		return (dwAttrib != INVALID_FILE_ATTRIBUTES &&
+			(dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
+	}
+
 	inline bool fileExists(std::string path)
 	{
 		DWORD dwAttrib = GetFileAttributesA(path.c_str());
+
+		return dwAttrib != INVALID_FILE_ATTRIBUTES;
+	}
+
+	inline bool fileExists(std::wstring path)
+	{
+		DWORD dwAttrib = GetFileAttributesW(path.c_str());
 
 		return dwAttrib != INVALID_FILE_ATTRIBUTES;
 	}
@@ -189,9 +244,49 @@ namespace ldp
 		}
 	}
 
+	inline void fileparts(std::wstring fullfile, std::wstring& path, std::wstring& name, std::wstring& ext)
+	{
+		int pos = fullfile.find_last_of(L'/');
+		if (pos >= fullfile.size())
+			pos = fullfile.find_last_of(L'\\');
+		if (pos >= fullfile.size())
+		{
+			path = L"";
+		}
+		else
+		{
+			path = fullfile.substr(0, pos + 1);
+			fullfile = fullfile.substr(pos + 1, fullfile.size());
+		}
+
+
+		int pos1 = fullfile.find_last_of(L'.');
+		if (pos1 >= fullfile.size())
+		{
+			name = fullfile;
+		}
+		else
+		{
+			name = fullfile.substr(0, pos1);
+			ext = fullfile.substr(pos1, fullfile.size());
+		}
+	}
+
 	inline bool file_exist(const char* path)
 	{
 		FILE* pFile = fopen(path, "r");
+		if (!pFile)
+			return false;
+		else
+		{
+			fclose(pFile);
+			return true;
+		}
+	}
+
+	inline bool file_exist(const wchar_t* path)
+	{
+		FILE* pFile = _wfopen(path, L"r");
 		if (!pFile)
 			return false;
 		else
@@ -226,9 +321,31 @@ namespace ldp
 		return s;
 	}
 
+	inline std::wstring getLineLabel(std::wstring& buffer, wchar_t sep = ':')
+	{
+		std::wstring s;
+		int pos = buffer.find_first_of(sep);
+		if (pos < buffer.size())
+		{
+			s = buffer.substr(0, pos);
+			pos++;
+			for (; pos < buffer.size();)
+			{
+				if (buffer[pos] == L' ')
+					pos++;
+				else
+					break;
+			}
+			buffer = buffer.substr(pos); // ignore a space after :
+		}
+		return s;
+	}
+
 	// ext: E.G., "obj", ".off", "*", ".*"
 	bool getAllFilesInDir(const std::string& path,
 		std::vector<std::string>& names, std::string ext);
+	bool getAllFilesInDir(const std::wstring& path,
+		std::vector<std::wstring>& names, std::wstring ext);
 
 	inline int PointInPolygon(int nvert, const float *vertx, const float *verty, float testx, float testy)
 	{
