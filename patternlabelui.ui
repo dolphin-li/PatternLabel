@@ -36,6 +36,7 @@
     <addaction name="actionLoad_image_list"/>
     <addaction name="actionSave_xml"/>
     <addaction name="actionLoad_xml"/>
+    <addaction name="actionLoad_jd_image_list"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
@@ -250,6 +251,11 @@
   <action name="actionLoad_xml">
    <property name="text">
     <string>load xml</string>
+   </property>
+  </action>
+  <action name="actionLoad_jd_image_list">
+   <property name="text">
+    <string>load jd image list</string>
    </property>
   </action>
  </widget>

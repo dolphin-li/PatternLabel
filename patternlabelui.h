@@ -13,6 +13,7 @@ public:
 	~PatternLabelUI();
 	public slots:
 	void on_actionLoad_image_list_triggered();
+	void on_actionLoad_jd_image_list_triggered();
 	void on_actionLoad_xml_triggered();
 	void on_actionSave_xml_triggered();
 	void on_pbPrevIndex_clicked();
@@ -24,6 +25,7 @@ public:
 protected:
 	void setupRadioButtons();
 	void updateByIndex(int index, int imgId);
+	void closeEvent(QCloseEvent* ev);
 private:
 	Ui::PatternLabelUIClass ui;
 	QMap<QString, QSharedPointer<QButtonGroup>> m_rbTypes;

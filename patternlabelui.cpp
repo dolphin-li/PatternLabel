@@ -29,6 +29,20 @@ PatternLabelUI::~PatternLabelUI()
 
 }
 
+void PatternLabelUI::closeEvent(QCloseEvent* ev)
+{
+	try
+	{
+		updateByIndex(g_dataholder.m_curIndex_imgIndex, g_dataholder.m_curIndex_imgIndex);
+	} catch (std::exception e)
+	{
+		std::cout << e.what() << std::endl;
+	} catch (...)
+	{
+		std::cout << "unknown error" << std::endl;
+	}
+}
+
 void PatternLabelUI::on_actionLoad_image_list_triggered()
 {
 	try
@@ -37,6 +51,29 @@ void PatternLabelUI::on_actionLoad_image_list_triggered()
 		if (name.isEmpty())
 			return;
 		g_dataholder.loadImageList(name.toStdString());
+		ui.sbCurIndex->setMaximum(g_dataholder.m_imgInfos.size());
+		updateByIndex(g_dataholder.m_lastRun_imgId, 0);
+		m_updateSbIndex = false;
+		ui.sbCurIndex->setValue(g_dataholder.m_curIndex);
+		m_updateSbIndex = true;
+	} catch (std::exception e)
+	{
+		std::cout << e.what() << std::endl;
+	} catch (...)
+	{
+		std::cout << "unknown error" << std::endl;
+	}
+}
+
+void PatternLabelUI::on_actionLoad_jd_image_list_triggered()
+{
+	try
+	{
+		QString name = QFileDialog::getOpenFileName(this, "load jd image list", 
+			g_dataholder.m_lastRun_RootDir.c_str(), "*.xlsx");
+		if (name.isEmpty())
+			return;
+		g_dataholder.loadJdImageList(name.toStdString());
 		ui.sbCurIndex->setMaximum(g_dataholder.m_imgInfos.size());
 		updateByIndex(g_dataholder.m_lastRun_imgId, 0);
 		m_updateSbIndex = false;

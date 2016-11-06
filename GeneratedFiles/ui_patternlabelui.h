@@ -37,6 +37,7 @@ public:
     QAction *actionLoad_image_list;
     QAction *actionSave_xml;
     QAction *actionLoad_xml;
+    QAction *actionLoad_jd_image_list;
     QWidget *centralWidget;
     QGridLayout *gridLayout;
     ImageViewer *widget;
@@ -79,6 +80,8 @@ public:
         actionSave_xml->setObjectName(QStringLiteral("actionSave_xml"));
         actionLoad_xml = new QAction(PatternLabelUIClass);
         actionLoad_xml->setObjectName(QStringLiteral("actionLoad_xml"));
+        actionLoad_jd_image_list = new QAction(PatternLabelUIClass);
+        actionLoad_jd_image_list->setObjectName(QStringLiteral("actionLoad_jd_image_list"));
         centralWidget = new QWidget(PatternLabelUIClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         gridLayout = new QGridLayout(centralWidget);
@@ -206,6 +209,7 @@ public:
         menuFile->addAction(actionLoad_image_list);
         menuFile->addAction(actionSave_xml);
         menuFile->addAction(actionLoad_xml);
+        menuFile->addAction(actionLoad_jd_image_list);
 
         retranslateUi(PatternLabelUIClass);
 
@@ -218,6 +222,7 @@ public:
         actionLoad_image_list->setText(QApplication::translate("PatternLabelUIClass", "load image list", 0));
         actionSave_xml->setText(QApplication::translate("PatternLabelUIClass", "save xml", 0));
         actionLoad_xml->setText(QApplication::translate("PatternLabelUIClass", "load xml", 0));
+        actionLoad_jd_image_list->setText(QApplication::translate("PatternLabelUIClass", "load jd image list", 0));
         menuFile->setTitle(QApplication::translate("PatternLabelUIClass", "file", 0));
         groupBox->setTitle(QApplication::translate("PatternLabelUIClass", "images", 0));
         pbLastImageThisIndex->setText(QApplication::translate("PatternLabelUIClass", "/\\", 0));

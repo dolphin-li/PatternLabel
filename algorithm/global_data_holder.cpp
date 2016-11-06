@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <sstream>
+#include "libxl.h"
 
 #define CHECK_FILE(result, filename) \
 if (!(result))\
@@ -14,7 +15,7 @@ void GlobalDataHolder::init()
 	m_curIndex = -1;
 	m_curIndex_imgIndex = -1;
 	m_xmlExportPureName = "patterns.xml";
-	m_lastRun_RootDir = "//dongping-pc1/d/dongping/BodyReconstruct/sewingPatterns/burdastyle_data";
+	m_lastRun_RootDir = "//dongping-pc1/sewingPatterns/burdastyle_data";
 	m_lastRun_imgId = 0;
 	loadLastRunInfo();
 }
@@ -130,4 +131,17 @@ void GlobalDataHolder::saveXml(std::string filename)const
 	CHECK_FILE(doc.SaveFile(filename.c_str()), filename);
 
 	saveLastRunInfo();
+}
+
+void GlobalDataHolder::loadJdImageList(std::string filename)
+{
+	m_imgInfos.clear();
+	std::string txtname, tmp;
+	ldp::fileparts(filename, m_rootPath, txtname, tmp);
+	m_xmlExportPureName = txtname + ".xml";
+	if (ldp::validWindowsPath(m_rootPath) != ldp::validWindowsPath(m_lastRun_RootDir))
+	{
+		m_lastRun_RootDir = m_rootPath;
+		m_lastRun_imgId = 0;
+	}
 }

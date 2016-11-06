@@ -10,6 +10,7 @@ public:
 	void init();
 
 	void loadImageList(std::string filename);
+	void loadJdImageList(std::string filename);
 	void loadXml(std::string filename);
 	void saveXml(std::string filename)const;
 protected:
