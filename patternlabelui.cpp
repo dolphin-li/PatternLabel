@@ -17,15 +17,29 @@ public:
 	{
 		isSaving = false;
 		needSave = false;
+		needEnd = false;
 	}
 	void requireSave()
 	{
 		isSaving = false;
 		needSave = true;
 	}
+	void requireEnd()
+	{
+		while (1) 
+		{
+			if (!isSaving)
+			{
+				printf("thread end\n");
+				break;
+			}
+		}
+		needEnd = true;
+	}
 private:
 	bool isSaving;
 	bool needSave;
+	bool needEnd;
 	QMutex mutex;
 protected:
 	virtual void run()
@@ -41,13 +55,16 @@ protected:
 				finfo.setFile(g_dataholder.m_rootPath, g_dataholder.m_xmlExportPureName);
 				wprintf(L"saving: %s\n", finfo.absoluteFilePath().toStdWString().c_str());
 				g_dataholder.saveXml(finfo.absoluteFilePath());
-				wprintf(L"saved: %s\n", finfo.absoluteFilePath().toStdWString().c_str());
+				wprintf(L"saved\n");
 				mutex.lock();
 				isSaving = false;
 				needSave = false;
 				mutex.unlock();
 			} // end isSaving
+			if (!isSaving && needEnd)
+				break;
 		} // end while 1
+		printf("SaveXmlThread ended\n");
 	}
 }; // XmlSaveThread
 
@@ -58,7 +75,7 @@ PatternLabelUI::PatternLabelUI(QWidget *parent)
 	m_updateSbIndex = true;
 	try
 	{
-		m_xmlSaveThread.reset(new XmlSaveThread());
+		m_xmlSaveThread = new XmlSaveThread();
 		m_xmlSaveThread->start();
 		g_dataholder.init();
 		setupRadioButtons();
@@ -73,7 +90,7 @@ PatternLabelUI::PatternLabelUI(QWidget *parent)
 
 PatternLabelUI::~PatternLabelUI()
 {
-
+	
 }
 
 void PatternLabelUI::closeEvent(QCloseEvent* ev)
@@ -81,6 +98,7 @@ void PatternLabelUI::closeEvent(QCloseEvent* ev)
 	try
 	{
 		updateByIndex(g_dataholder.m_curIndex_imgIndex, g_dataholder.m_curIndex_imgIndex);
+		m_xmlSaveThread->requireEnd();
 	} catch (std::exception e)
 	{
 		std::cout << e.what() << std::endl;
@@ -145,6 +163,7 @@ void PatternLabelUI::on_actionLoad_xml_triggered()
 		if (name.isEmpty())
 			return;
 		g_dataholder.loadXml(name);
+		g_dataholder.saveXml(name+"_backup_loaded");
 		ui.sbCurIndex->setMaximum(g_dataholder.m_imgInfos.size());
 		updateByIndex(g_dataholder.m_lastRun_imgId, 0);
 		m_updateSbIndex = false;
