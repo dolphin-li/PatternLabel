@@ -1,4 +1,4 @@
-#include "global_data_holder.h"
+﻿#include "global_data_holder.h"
 
 #include <fstream>
 #include <sstream>
@@ -166,8 +166,9 @@ inline QString findAppropriateJdImgPath(QString root, QString xlslName, QString 
 inline QString jdImage2IdMask(QString img)
 {
 	QFileInfo info(img);
-	QDir dir(img);
-	QFileInfo info1(dir.absoluteFilePath(info.baseName() + "_label.png"));
+	QDir dir(info.absolutePath());
+	QString s = dir.absoluteFilePath(info.baseName() + "_label.png");
+	QFileInfo info1(s);
 	if (info1.exists())
 		return info1.absoluteFilePath();
 	return "";
@@ -176,7 +177,17 @@ inline QString jdImage2IdMask(QString img)
 inline QString jdBasename(QString imgFullName, QString root)
 {
 	QFileInfo info(imgFullName);
-	return info.absolutePath().right(info.absolutePath().size() - root.size());
+	return info.absolutePath().right(info.absolutePath().size() - QDir::cleanPath(root).size() - 1);
+}
+
+inline void convertJdAttNameAndType(QString str, QString& jdAttName, QString& jdType)
+{
+	int seg = str.indexOf(65306); //NOTE: this is uniode ':'
+	jdAttName = str.left(seg).trimmed(); 
+	jdType = str.right(str.size()-seg-1).trimmed();
+	int pos = jdType.indexOf('.');
+	if (pos >= 0) // ignore those numbers
+		jdType = "";
 }
 
 void GlobalDataHolder::loadJdImageList(QString filename)
@@ -218,11 +229,8 @@ void GlobalDataHolder::loadJdImageList(QString filename)
 			if (cell)
 				values[col-fc] = cell->value().toString();
 		}
-		if (values[0].isEmpty())
-		{
 
-		} // end if empty value0
-		else
+		if (!values[0].isEmpty())
 		{
 			QString img = findAppropriateJdImgPath(m_rootPath, imgRelFolder, values[4]);
 			if (!img.isEmpty())
@@ -237,11 +245,32 @@ void GlobalDataHolder::loadJdImageList(QString filename)
 				auto mask = jdImage2IdMask(img);
 				if (!mask.isEmpty())
 					curInfo->addImage(mask);
+				auto mapped = PatternImageInfo::jdAttributeMapped("cloth-types", imgRelFolder);
+				if (!mapped.first.isEmpty() && !mapped.second.isEmpty())
+					curInfo->setAttributeType(mapped.first, mapped.second);
 			}
 			else
 				curInfo = nullptr;
-		} // end else not empty value0
+		} // end if not empty value0
+
+		if (curInfo && !values[3].isEmpty())
+		{
+			QString jdName, jdType;
+			convertJdAttNameAndType(values[3], jdName, jdType);
+			if (!jdType.isEmpty())
+			{
+				// useful when construct __attributes.xml
+				//PatternImageInfo::addJdAttributeMap(jdName, "", jdType, "");
+
+				auto mapped = PatternImageInfo::jdAttributeMapped(jdName, jdType);
+				if (!mapped.first.isEmpty() && !mapped.second.isEmpty())
+					curInfo->setAttributeType(mapped.first, mapped.second);
+			}
+		} // end if value[3]
 	} // end for row
+
+	// useful when construct __attributes.xml
+	//PatternImageInfo::constructTypeMaps_qxml_save("__attributes.xml");
 }
 
 bool GlobalDataHolder::loadXml_tixml(QString filename)

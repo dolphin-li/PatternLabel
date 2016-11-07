@@ -38,6 +38,10 @@ public:
 	static int numAttributes() { return (int)s_typeSet.size(); }
 	static QVector<QString> attributeNames();
 	static const QVector<QString>& attributeTypes(const QString& name);
+	static QVector<QString> jdAttributeNames();
+	static int numJdAttributes() { return (int)s_jd2typeMap.size(); }
+	static QPair<QString, QString> jdAttributeMapped(QString jdAttName, QString jdType);
+	static void addJdAttributeMap(QString jdAttName, QString attName, QString jdType, QString type);
 protected:
 	static bool constructTypeMaps();
 	static bool constructTypeMaps_tixml(QString filename);
@@ -57,5 +61,10 @@ private:
 	/// for jd images
 	QString m_jdTitle;
 	QString m_jdId;
-	static QMap<QString, QMap<QString, QString>> s_jd2typeMap;
+	struct JdTypeMapVal
+	{
+		QString mappedName;
+		QMap<QString, QString> typeMap;
+	};
+	static QMap<QString, JdTypeMapVal> s_jd2typeMap;
 };

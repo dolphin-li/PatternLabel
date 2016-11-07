@@ -245,6 +245,7 @@ bool PatternImageInfo::fromXml(QString rootFolder, TiXmlElement* parent)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 QMap<QString, QVector<QString>> PatternImageInfo::s_typeSet;
+QMap<QString, PatternImageInfo::JdTypeMapVal> PatternImageInfo::s_jd2typeMap;
 bool PatternImageInfo::s_mapInitialized = PatternImageInfo::constructTypeMaps();
 
 bool PatternImageInfo::constructTypeMaps()
@@ -294,7 +295,7 @@ bool PatternImageInfo::constructTypeMaps_qxml(QString filename)
 		return false;
 	}
 	QXmlStreamReader reader(&file);
-	QString currTypes = "";
+	QString currTypes = "", currJdTypes = "";
 	while (!reader.isEndDocument() && !reader.hasError())
 	{
 		reader.readNext();
@@ -303,13 +304,13 @@ bool PatternImageInfo::constructTypeMaps_qxml(QString filename)
 		auto n = reader.name().toString();
 		if (n == "types")
 		{
+			currJdTypes = "";
 			for (auto v : reader.attributes())
 			{
 				if (v.name() == "value")
 				{
 					s_typeSet.insert(v.value().toString(), QVector<QString>());
 					currTypes = v.value().toString();
-					break;
 				}
 			} // end if v
 		} // end if n
@@ -319,6 +320,35 @@ bool PatternImageInfo::constructTypeMaps_qxml(QString filename)
 			QString t = reader.readElementText();
 			types.push_back(t);
 		} // end if n
+		else if (n == "jdtypemap")
+		{
+			currTypes = "";
+			currJdTypes = "";
+			JdTypeMapVal val;
+			for (auto v : reader.attributes())
+			{
+				if (v.name() == "value")
+					currJdTypes = v.value().toString();
+				else if (v.name() == "map")
+					val.mappedName = v.value().toString();
+			} // end if v
+			if (!currJdTypes.isEmpty())
+				s_jd2typeMap.insert(currJdTypes, val);
+		} // end if n
+		else if (n == "type" && currJdTypes != "")
+		{
+			auto& types = s_jd2typeMap[currJdTypes];
+			QString value, map;
+			for (auto v : reader.attributes())
+			{
+				if (v.name() == "value")
+					value = v.value().toString();
+				else if (v.name() == "map")
+					map = v.value().toString();
+			} // end if v
+			if (!value.isEmpty())
+				types.typeMap.insert(value, map);
+		} // end if n
 	} // end while
 	if (s_typeSet.size() == 0)
 	{
@@ -327,12 +357,11 @@ bool PatternImageInfo::constructTypeMaps_qxml(QString filename)
 	}
 	if (reader.hasError())
 	{
-		wprintf(L"Error load [%s]: %s\n", filename.toStdWString().c_str(), reader.errorString());
+		wprintf(L"Error load [%s]: %s\n", filename.toStdWString().c_str(), reader.errorString().toStdWString().c_str());
 		return false;
 	}
 	return true;
 }
-
 
 bool PatternImageInfo::constructTypeMaps_qxml_save(QString filename)
 {
@@ -347,13 +376,27 @@ bool PatternImageInfo::constructTypeMaps_qxml_save(QString filename)
 	writer.writeStartDocument();
 
 	writer.writeStartElement("document");
-	for (auto iter = s_typeSet.begin(); iter != s_typeSet.end(); ++iter)
+	for (auto& iter = s_typeSet.begin(); iter != s_typeSet.end(); ++iter)
 	{
 		writer.writeStartElement("types");
 		writer.writeAttribute("value", iter.key());
-		for (auto type : iter.value())
+		for (auto& type : iter.value())
 		{
 			writer.writeTextElement("type", type);
+		}
+		writer.writeEndElement();
+	}
+	for (auto& iter = s_jd2typeMap.begin(); iter != s_jd2typeMap.end(); ++iter)
+	{
+		writer.writeStartElement("jdtypemap");
+		writer.writeAttribute("value", iter.key());
+		writer.writeAttribute("map", iter.value().mappedName);
+		for (auto& type_iter = iter.value().typeMap.begin(); type_iter != iter.value().typeMap.end(); ++type_iter)
+		{
+			writer.writeStartElement("type");
+			writer.writeAttribute("value", type_iter.key());
+			writer.writeAttribute("map", type_iter.value());
+			writer.writeEndElement();
 		}
 		writer.writeEndElement();
 	}
@@ -380,4 +423,29 @@ QVector<QString> PatternImageInfo::attributeNames()
 const QVector<QString>& PatternImageInfo::attributeTypes(const QString& name)
 {
 	return s_typeSet[name];
+}
+
+QVector<QString> PatternImageInfo::jdAttributeNames()
+{
+	QVector<QString> names;
+	for (auto iter = s_jd2typeMap.begin(); iter != s_jd2typeMap.end(); ++iter)
+		names.push_back(iter.key());
+	return names;
+}
+
+QPair<QString, QString>  PatternImageInfo::jdAttributeMapped(QString jdAttName, QString jdType)
+{
+	const auto& iter = s_jd2typeMap.find(jdAttName);
+	if (iter == s_jd2typeMap.end())
+		return QPair<QString, QString>();
+	auto iter1 = iter.value().typeMap.find(jdType);
+	if (iter1 == iter.value().typeMap.end())
+		return QPair<QString, QString>();
+	return QPair<QString, QString>(iter.value().mappedName, iter1.value());
+}
+
+void PatternImageInfo::addJdAttributeMap(QString jdAttName, QString attName, QString jdType, QString type)
+{
+	s_jd2typeMap[jdAttName].mappedName = attName;
+	s_jd2typeMap[jdAttName].typeMap[jdType] = type;
 }
