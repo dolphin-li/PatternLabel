@@ -2,6 +2,7 @@
 #include "util.h"
 #include <QFileinfo>
 #include <QDir>
+#include <QPixmapCache>
 PatternImageInfo::PatternImageInfo()
 {
 	setDefaultTypes();
@@ -26,6 +27,21 @@ int PatternImageInfo::numImages()const
 QString PatternImageInfo::getImageName(int i)const
 {
 	return m_imgNames.at(i);
+}
+
+QPixmap* PatternImageInfo::getImage(int i)const
+{
+	QString name = getImageName(i);
+	
+	QPixmap* p = QPixmapCache::find(name);
+	if (p == nullptr)
+	{
+		QPixmapCache::insert(name, QPixmap(name));
+		p = QPixmapCache::find(name);
+		if (p == nullptr)
+			throw std::exception("cache pixelmap failed!");
+	}
+	return p;
 }
 
 void PatternImageInfo::clearImages()
@@ -250,6 +266,9 @@ bool PatternImageInfo::s_mapInitialized = PatternImageInfo::constructTypeMaps();
 
 bool PatternImageInfo::constructTypeMaps()
 {
+	// seems not larger than 2GB..32bit int
+	QPixmapCache::setCacheLimit(1024*2047); // kb
+
 	QString filename = "__attributes.xml";
 	bool r = constructTypeMaps_qxml(filename);
 	if (!r)

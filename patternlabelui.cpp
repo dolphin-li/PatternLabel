@@ -5,6 +5,51 @@
 #include <QFileDialog>
 #include <QRadioButton>
 #include <QGridLayout>
+#include <QPixmapCache>
+#include <QThread>
+#include <QMutex>
+
+
+class XmlSaveThread : public QThread
+{
+public:
+	XmlSaveThread()
+	{
+		isSaving = false;
+		needSave = false;
+	}
+	void requireSave()
+	{
+		isSaving = false;
+		needSave = true;
+	}
+private:
+	bool isSaving;
+	bool needSave;
+	QMutex mutex;
+protected:
+	virtual void run()
+	{
+		while (1)
+		{
+			if (!isSaving && needSave)
+			{
+				mutex.lock();
+				isSaving = true;
+				mutex.unlock();
+				QFileInfo finfo;
+				finfo.setFile(g_dataholder.m_rootPath, g_dataholder.m_xmlExportPureName);
+				wprintf(L"saving: %s\n", finfo.absoluteFilePath().toStdWString().c_str());
+				g_dataholder.saveXml(finfo.absoluteFilePath());
+				wprintf(L"saved: %s\n", finfo.absoluteFilePath().toStdWString().c_str());
+				mutex.lock();
+				isSaving = false;
+				needSave = false;
+				mutex.unlock();
+			} // end isSaving
+		} // end while 1
+	}
+}; // XmlSaveThread
 
 PatternLabelUI::PatternLabelUI(QWidget *parent)
 	: QMainWindow(parent)
@@ -13,6 +58,8 @@ PatternLabelUI::PatternLabelUI(QWidget *parent)
 	m_updateSbIndex = true;
 	try
 	{
+		m_xmlSaveThread.reset(new XmlSaveThread());
+		m_xmlSaveThread->start();
 		g_dataholder.init();
 		setupRadioButtons();
 	} catch (std::exception e)
@@ -218,17 +265,12 @@ void PatternLabelUI::updateByIndex(int index, int imgId)
 	if (g_dataholder.m_imgInfos.size() == 0)
 		return;
 	if (g_dataholder.m_curIndex >= 0 && g_dataholder.m_curIndex_imgIndex >= 0)
-	{
-		QFileInfo finfo;
-		finfo.setFile(g_dataholder.m_rootPath, g_dataholder.m_xmlExportPureName);
-		g_dataholder.saveXml(finfo.absoluteFilePath());
-	}
+		m_xmlSaveThread->requireSave();
 	g_dataholder.m_curIndex = (index + g_dataholder.m_imgInfos.size()) % g_dataholder.m_imgInfos.size();
 	g_dataholder.m_lastRun_imgId = g_dataholder.m_curIndex;
 	const auto& info = g_dataholder.m_imgInfos.at(g_dataholder.m_curIndex);
 	g_dataholder.m_curIndex_imgIndex = (imgId + info.numImages()) % info.numImages();
-	QImage img(info.getImageName(g_dataholder.m_curIndex_imgIndex));
-	ui.widget->setColorImage(img);
+	ui.widget->setColorImage(info.getImage(g_dataholder.m_curIndex_imgIndex)->toImage());
 
 	QVector<QString> typeNames = PatternImageInfo::attributeNames();
 	for (auto name : typeNames)

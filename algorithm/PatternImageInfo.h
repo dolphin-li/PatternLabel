@@ -7,6 +7,7 @@
 #include <qxml.h>
 #include <qxmlstream.h>
 #include "tinyxml\tinyxml.h"
+#include <QPixmap>
 class PatternImageInfo
 {
 public:
@@ -16,6 +17,7 @@ public:
 	void clear();
 	int numImages()const;
 	QString getImageName(int i)const;
+	QPixmap* getImage(int i)const;
 	void clearImages();
 	void addImage(const QString& name);
 	void setBaseName(const QString& name);

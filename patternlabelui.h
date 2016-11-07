@@ -3,7 +3,9 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_patternlabelui.h"
+#include <QMutex>
 
+class XmlSaveThread;
 class PatternLabelUI : public QMainWindow
 {
 	Q_OBJECT
@@ -30,6 +32,7 @@ private:
 	Ui::PatternLabelUIClass ui;
 	QMap<QString, QSharedPointer<QButtonGroup>> m_rbTypes;
 	bool m_updateSbIndex;
+	QSharedPointer<XmlSaveThread> m_xmlSaveThread;
 };
 
 #endif // PATTERNLABELUI_H
