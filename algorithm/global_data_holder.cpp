@@ -25,6 +25,7 @@ void GlobalDataHolder::init()
 	m_curIndex_imgIndex = -1;
 	m_xmlExportPureName = "patterns.xml";
 	m_lastRun_RootDir = "//dongping-pc1/sewingPatterns/burdastyle_data";
+	m_lastRun_PatternDir = "//dongping-pc1/sewingPatterns/burdastyle_data";
 	m_lastRun_imgId = 0;
 	loadLastRunInfo();
 }
@@ -40,6 +41,15 @@ void GlobalDataHolder::loadLastRunInfo()
 	stm >> m_lastRun_imgId;
 	if (m_lastRun_imgId < 0)
 		m_lastRun_imgId = 0;
+	str = L"";
+	while (!stm.eof())
+	{
+		std::getline(stm, str);
+		if (!QString().fromStdWString(str).trimmed().isEmpty())
+			break;
+	} 
+	if (!str.empty())
+		m_lastRun_PatternDir = QString().fromStdWString(str);
 	stm.close();
 }
 
@@ -50,6 +60,7 @@ void GlobalDataHolder::saveLastRunInfo()const
 		return;
 	stm << m_lastRun_RootDir.toStdWString() << std::endl;
 	stm << m_lastRun_imgId << std::endl;
+	stm << m_lastRun_PatternDir.toStdWString() << std::endl;
 	stm.close();
 }
 
@@ -123,18 +134,18 @@ void GlobalDataHolder::loadXml(QString filename)
 	}
 	saveLastRunInfo();
 
-	if (!loadXml_qxml(filename))
+	if (!loadXml_qxml(filename, m_rootPath, m_imgInfos))
 	{
-		CHECK_FILE(loadXml_tixml(filename), filename);
-		CHECK_FILE(saveXml_tixml(filename + ".backup"), filename);
-		CHECK_FILE(saveXml_qxml(filename), filename);
+		CHECK_FILE(loadXml_tixml(filename, m_rootPath, m_imgInfos), filename);
+		CHECK_FILE(saveXml_tixml(filename + ".backup", m_rootPath, m_imgInfos), filename);
+		CHECK_FILE(saveXml_qxml(filename, m_rootPath, m_imgInfos), filename);
 	}
 
 }
 
 void GlobalDataHolder::saveXml(QString filename)const
 {
-	CHECK_FILE(saveXml_qxml(filename), filename);
+	CHECK_FILE(saveXml_qxml(filename, m_rootPath, m_imgInfos), filename);
 	saveLastRunInfo();
 }
 
@@ -276,7 +287,7 @@ void GlobalDataHolder::loadJdImageList(QString filename)
 	//PatternImageInfo::constructTypeMaps_qxml_save("__attributes.xml");
 }
 
-bool GlobalDataHolder::loadXml_tixml(QString filename)
+bool GlobalDataHolder::loadXml_tixml(QString filename, QString root, std::vector<PatternImageInfo>& imgInfos)
 {
 	TiXmlDocument doc;
 	if (!doc.LoadFile(filename.toStdString().c_str()))
@@ -284,22 +295,22 @@ bool GlobalDataHolder::loadXml_tixml(QString filename)
 	for (auto doc_iter = doc.FirstChildElement(); doc_iter; doc_iter = doc_iter->NextSiblingElement())
 	{
 		PatternImageInfo info;
-		if (!info.fromXml(m_rootPath, doc_iter))
+		if (!info.fromXml(root, doc_iter))
 		{
-			m_imgInfos.clear();
+			imgInfos.clear();
 			return false;
 		}
 		if (info.getBaseName() != "")
-			m_imgInfos.push_back(info);
+			imgInfos.push_back(info);
 	} // end for doc_iter
 	return true;
 }
 
-bool GlobalDataHolder::saveXml_tixml(QString filename)const
+bool GlobalDataHolder::saveXml_tixml(QString filename, QString root, const std::vector<PatternImageInfo>& imgInfos)
 {
 	TiXmlDocument doc;
 
-	for (const auto& info : m_imgInfos)
+	for (const auto& info : imgInfos)
 	{
 		TiXmlElement* ele = new TiXmlElement(info.getBaseName().toStdString().c_str());
 		doc.LinkEndChild(ele);
@@ -311,7 +322,7 @@ bool GlobalDataHolder::saveXml_tixml(QString filename)const
 	return true;
 }
 
-bool GlobalDataHolder::loadXml_qxml(QString filename)
+bool GlobalDataHolder::loadXml_qxml(QString filename, QString root, std::vector<PatternImageInfo>& imgInfos)
 {
 	QFile file(filename);
 	if (!file.open(QIODevice::ReadOnly))
@@ -336,14 +347,14 @@ bool GlobalDataHolder::loadXml_qxml(QString filename)
 	while (!reader.isEndDocument())
 	{
 		PatternImageInfo info;
-		info.fromXml(m_rootPath, reader);
+		info.fromXml(root, reader);
 		if (info.getBaseName() != "")
-			m_imgInfos.push_back(info);
+			imgInfos.push_back(info);
 		if (reader.hasError())
 		{
 			wprintf(L"read error [%s]: %s\n", filename.toStdWString().c_str(),
 				reader.errorString().toStdWString().c_str());
-			m_imgInfos.clear();
+			imgInfos.clear();
 			return false;
 		}
 	} // end for doc_iter
@@ -351,7 +362,7 @@ bool GlobalDataHolder::loadXml_qxml(QString filename)
 	return true;
 }
 
-bool GlobalDataHolder::saveXml_qxml(QString filename)const
+bool GlobalDataHolder::saveXml_qxml(QString filename, QString root, const std::vector<PatternImageInfo>& imgInfos)
 {
 	QFile file(filename);
 	if (!file.open(QIODevice::WriteOnly))
@@ -365,7 +376,7 @@ bool GlobalDataHolder::saveXml_qxml(QString filename)const
 		return false;
 	writer.writeStartDocument();
 	writer.writeStartElement("document");
-	for (const auto& info : m_imgInfos)
+	for (const auto& info : imgInfos)
 	{
 		info.toXml(writer);
 		if (writer.hasError())
@@ -376,8 +387,10 @@ bool GlobalDataHolder::saveXml_qxml(QString filename)const
 	return true;
 }
 
+//////////////////////////////////////////////////////////////////////////////////
 void GlobalDataHolder::collect_labelded_patterns(QString folder)
 {
+	static QString mergeName = "pattern_merged";
 	std::vector<std::wstring> xmlNames;
 	ldp::getAllFilesInDir(folder.toStdWString(), xmlNames, L".xml");
 	auto imgInfoBackup = m_imgInfos;
@@ -387,9 +400,12 @@ void GlobalDataHolder::collect_labelded_patterns(QString folder)
 	for (size_t iXml = 0; iXml < xmlNames.size(); iXml++)
 	{
 		QString xmlFullName = QString().fromStdWString(xmlNames[iXml]);
-		loadXml(xmlFullName);
 		QFileInfo xinfo(xmlFullName);
 		auto xpath = xinfo.absolutePath();
+		// ignore the merged xml itself
+		if (xinfo.baseName().toLower() == mergeName.toLower())
+			continue;
+		loadXml(xmlFullName);
 		for (const auto& info : m_imgInfos)
 		{
 			if (info.getBaseName() == "" || info.getAttributeType("cloth-types") == "other"
@@ -404,7 +420,23 @@ void GlobalDataHolder::collect_labelded_patterns(QString folder)
 
 	m_imgInfos = imgInfoMerged;
 	QDir cdir(folder);
-	saveXml(cdir.absoluteFilePath("pattern_merged.xml"));
+	saveXml(cdir.absoluteFilePath(mergeName+".xml"));
 
 	m_imgInfos = imgInfoBackup;
+}
+
+void GlobalDataHolder::loadPatternXml(QString filename)
+{
+	m_patternInfos.clear();
+	QFileInfo finfo(filename);
+	QFileInfo linfo(m_lastRun_PatternDir);
+	if (finfo.absolutePath() != linfo.absoluteFilePath())
+		m_lastRun_PatternDir = finfo.absolutePath();
+	saveLastRunInfo();
+	if (!loadXml_qxml(filename, finfo.absolutePath(), m_patternInfos))
+	{
+		CHECK_FILE(loadXml_tixml(filename, finfo.absolutePath(), m_patternInfos), filename);
+		CHECK_FILE(saveXml_tixml(filename + ".backup", finfo.absolutePath(), m_patternInfos), filename);
+		CHECK_FILE(saveXml_qxml(filename, finfo.absolutePath(), m_patternInfos), filename);
+	}
 }

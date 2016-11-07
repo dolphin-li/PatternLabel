@@ -53,9 +53,13 @@ protected:
 				mutex.unlock();
 				QFileInfo finfo;
 				finfo.setFile(g_dataholder.m_rootPath, g_dataholder.m_xmlExportPureName);
+#ifndef NDEBUG
 				wprintf(L"saving: %s\n", finfo.absoluteFilePath().toStdWString().c_str());
+#endif
 				g_dataholder.saveXml(finfo.absoluteFilePath());
+#ifndef NDEBUG
 				wprintf(L"saved\n");
+#endif
 				mutex.lock();
 				isSaving = false;
 				needSave = false;
@@ -226,6 +230,25 @@ void PatternLabelUI::on_actionCollect_pattern_xmls_triggered()
 		if (name.isEmpty())
 			return;
 		g_dataholder.collect_labelded_patterns(name);
+	} catch (std::exception e)
+	{
+		std::cout << e.what() << std::endl;
+	} catch (...)
+	{
+		std::cout << "unknown error" << std::endl;
+	}
+}
+
+void PatternLabelUI::on_actionLoad_pattern_xml_triggered()
+{
+	try
+	{
+		QString name = QFileDialog::getOpenFileName(this, "load pattern xml",
+			g_dataholder.m_lastRun_RootDir, "*.xml");
+		if (name.isEmpty())
+			return;
+		g_dataholder.loadPatternXml(name);
+		
 	} catch (std::exception e)
 	{
 		std::cout << e.what() << std::endl;

@@ -25,7 +25,6 @@
 #include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QStatusBar>
-#include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
 #include "imageviewer.h"
 
@@ -39,37 +38,28 @@ public:
     QAction *actionLoad_xml;
     QAction *actionLoad_jd_image_list;
     QAction *actionCollect_pattern_xmls;
+    QAction *actionLoad_pattern_xml;
     QWidget *centralWidget;
     QGridLayout *gridLayout;
     ImageViewer *widget;
     QMenuBar *menuBar;
     QMenu *menuFile;
     QMenu *menuEdit;
-    QToolBar *mainToolBar;
     QStatusBar *statusBar;
     QDockWidget *dockWidgetRight;
     QWidget *dockWidgetContentsRight;
     QGridLayout *gridLayout_3;
     QGroupBox *groupBox;
     QGridLayout *gridLayout_2;
-    QSpacerItem *horizontalSpacer;
-    QPushButton *pbLastImageThisIndex;
-    QSpacerItem *horizontalSpacer_2;
-    QPushButton *pbPrevIndex;
-    QPushButton *pbNextIndex;
-    QSpacerItem *horizontalSpacer_3;
     QPushButton *pbNextImageThisIndex;
-    QSpacerItem *horizontalSpacer_4;
-    QSpacerItem *verticalSpacer;
-    QDockWidget *dockWidgetBottom;
-    QWidget *dockWidgetContentsBottom;
-    QGridLayout *gridLayout_5;
+    QPushButton *pbNextIndex;
+    QPushButton *pbPrevIndex;
+    QPushButton *pbLastImageThisIndex;
     QGroupBox *groupBox_2;
     QGridLayout *gridLayout_4;
     QLabel *label;
     QSpinBox *sbCurIndex;
-    QSpacerItem *horizontalSpacer_5;
-    QSpacerItem *verticalSpacer_2;
+    QSpacerItem *verticalSpacer;
 
     void setupUi(QMainWindow *PatternLabelUIClass)
     {
@@ -86,6 +76,8 @@ public:
         actionLoad_jd_image_list->setObjectName(QStringLiteral("actionLoad_jd_image_list"));
         actionCollect_pattern_xmls = new QAction(PatternLabelUIClass);
         actionCollect_pattern_xmls->setObjectName(QStringLiteral("actionCollect_pattern_xmls"));
+        actionLoad_pattern_xml = new QAction(PatternLabelUIClass);
+        actionLoad_pattern_xml->setObjectName(QStringLiteral("actionLoad_pattern_xml"));
         centralWidget = new QWidget(PatternLabelUIClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         gridLayout = new QGridLayout(centralWidget);
@@ -106,15 +98,12 @@ public:
         menuEdit = new QMenu(menuBar);
         menuEdit->setObjectName(QStringLiteral("menuEdit"));
         PatternLabelUIClass->setMenuBar(menuBar);
-        mainToolBar = new QToolBar(PatternLabelUIClass);
-        mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
-        PatternLabelUIClass->addToolBar(Qt::TopToolBarArea, mainToolBar);
         statusBar = new QStatusBar(PatternLabelUIClass);
         statusBar->setObjectName(QStringLiteral("statusBar"));
         PatternLabelUIClass->setStatusBar(statusBar);
         dockWidgetRight = new QDockWidget(PatternLabelUIClass);
         dockWidgetRight->setObjectName(QStringLiteral("dockWidgetRight"));
-        dockWidgetRight->setMinimumSize(QSize(200, 160));
+        dockWidgetRight->setMinimumSize(QSize(356, 235));
         dockWidgetContentsRight = new QWidget();
         dockWidgetContentsRight->setObjectName(QStringLiteral("dockWidgetContentsRight"));
         gridLayout_3 = new QGridLayout(dockWidgetContentsRight);
@@ -127,61 +116,30 @@ public:
         gridLayout_2->setSpacing(6);
         gridLayout_2->setContentsMargins(11, 11, 11, 11);
         gridLayout_2->setObjectName(QStringLiteral("gridLayout_2"));
-        horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        pbNextImageThisIndex = new QPushButton(groupBox);
+        pbNextImageThisIndex->setObjectName(QStringLiteral("pbNextImageThisIndex"));
 
-        gridLayout_2->addItem(horizontalSpacer, 0, 0, 1, 1);
-
-        pbLastImageThisIndex = new QPushButton(groupBox);
-        pbLastImageThisIndex->setObjectName(QStringLiteral("pbLastImageThisIndex"));
-
-        gridLayout_2->addWidget(pbLastImageThisIndex, 0, 1, 1, 2);
-
-        horizontalSpacer_2 = new QSpacerItem(46, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-        gridLayout_2->addItem(horizontalSpacer_2, 0, 3, 1, 2);
-
-        pbPrevIndex = new QPushButton(groupBox);
-        pbPrevIndex->setObjectName(QStringLiteral("pbPrevIndex"));
-
-        gridLayout_2->addWidget(pbPrevIndex, 1, 0, 1, 2);
+        gridLayout_2->addWidget(pbNextImageThisIndex, 0, 2, 1, 1);
 
         pbNextIndex = new QPushButton(groupBox);
         pbNextIndex->setObjectName(QStringLiteral("pbNextIndex"));
 
-        gridLayout_2->addWidget(pbNextIndex, 1, 2, 1, 3);
+        gridLayout_2->addWidget(pbNextIndex, 0, 3, 1, 1);
 
-        horizontalSpacer_3 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        pbPrevIndex = new QPushButton(groupBox);
+        pbPrevIndex->setObjectName(QStringLiteral("pbPrevIndex"));
 
-        gridLayout_2->addItem(horizontalSpacer_3, 2, 0, 1, 1);
+        gridLayout_2->addWidget(pbPrevIndex, 0, 0, 1, 1);
 
-        pbNextImageThisIndex = new QPushButton(groupBox);
-        pbNextImageThisIndex->setObjectName(QStringLiteral("pbNextImageThisIndex"));
+        pbLastImageThisIndex = new QPushButton(groupBox);
+        pbLastImageThisIndex->setObjectName(QStringLiteral("pbLastImageThisIndex"));
 
-        gridLayout_2->addWidget(pbNextImageThisIndex, 2, 1, 1, 3);
-
-        horizontalSpacer_4 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-        gridLayout_2->addItem(horizontalSpacer_4, 2, 4, 1, 1);
+        gridLayout_2->addWidget(pbLastImageThisIndex, 0, 1, 1, 1);
 
 
         gridLayout_3->addWidget(groupBox, 1, 0, 1, 1);
 
-        verticalSpacer = new QSpacerItem(20, 522, QSizePolicy::Minimum, QSizePolicy::Expanding);
-
-        gridLayout_3->addItem(verticalSpacer, 0, 0, 1, 1);
-
-        dockWidgetRight->setWidget(dockWidgetContentsRight);
-        PatternLabelUIClass->addDockWidget(static_cast<Qt::DockWidgetArea>(2), dockWidgetRight);
-        dockWidgetBottom = new QDockWidget(PatternLabelUIClass);
-        dockWidgetBottom->setObjectName(QStringLiteral("dockWidgetBottom"));
-        dockWidgetBottom->setMinimumSize(QSize(115, 150));
-        dockWidgetContentsBottom = new QWidget();
-        dockWidgetContentsBottom->setObjectName(QStringLiteral("dockWidgetContentsBottom"));
-        gridLayout_5 = new QGridLayout(dockWidgetContentsBottom);
-        gridLayout_5->setSpacing(6);
-        gridLayout_5->setContentsMargins(11, 11, 11, 11);
-        gridLayout_5->setObjectName(QStringLiteral("gridLayout_5"));
-        groupBox_2 = new QGroupBox(dockWidgetContentsBottom);
+        groupBox_2 = new QGroupBox(dockWidgetContentsRight);
         groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
         gridLayout_4 = new QGridLayout(groupBox_2);
         gridLayout_4->setSpacing(6);
@@ -198,18 +156,14 @@ public:
         gridLayout_4->addWidget(sbCurIndex, 0, 1, 1, 1);
 
 
-        gridLayout_5->addWidget(groupBox_2, 0, 0, 1, 1);
+        gridLayout_3->addWidget(groupBox_2, 2, 0, 1, 1);
 
-        horizontalSpacer_5 = new QSpacerItem(1005, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        verticalSpacer = new QSpacerItem(20, 522, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
-        gridLayout_5->addItem(horizontalSpacer_5, 0, 1, 2, 1);
+        gridLayout_3->addItem(verticalSpacer, 3, 0, 1, 1);
 
-        verticalSpacer_2 = new QSpacerItem(20, 68, QSizePolicy::Minimum, QSizePolicy::Expanding);
-
-        gridLayout_5->addItem(verticalSpacer_2, 1, 0, 1, 1);
-
-        dockWidgetBottom->setWidget(dockWidgetContentsBottom);
-        PatternLabelUIClass->addDockWidget(static_cast<Qt::DockWidgetArea>(8), dockWidgetBottom);
+        dockWidgetRight->setWidget(dockWidgetContentsRight);
+        PatternLabelUIClass->addDockWidget(static_cast<Qt::DockWidgetArea>(2), dockWidgetRight);
 
         menuBar->addAction(menuFile->menuAction());
         menuBar->addAction(menuEdit->menuAction());
@@ -218,6 +172,7 @@ public:
         menuFile->addAction(actionLoad_xml);
         menuFile->addAction(actionLoad_jd_image_list);
         menuEdit->addAction(actionCollect_pattern_xmls);
+        menuEdit->addAction(actionLoad_pattern_xml);
 
         retranslateUi(PatternLabelUIClass);
 
@@ -232,17 +187,18 @@ public:
         actionLoad_xml->setText(QApplication::translate("PatternLabelUIClass", "load xml", 0));
         actionLoad_jd_image_list->setText(QApplication::translate("PatternLabelUIClass", "load jd image list", 0));
         actionCollect_pattern_xmls->setText(QApplication::translate("PatternLabelUIClass", "collect pattern xmls", 0));
+        actionLoad_pattern_xml->setText(QApplication::translate("PatternLabelUIClass", "load pattern xml", 0));
         menuFile->setTitle(QApplication::translate("PatternLabelUIClass", "file", 0));
         menuEdit->setTitle(QApplication::translate("PatternLabelUIClass", "pattern", 0));
         groupBox->setTitle(QApplication::translate("PatternLabelUIClass", "images", 0));
-        pbLastImageThisIndex->setText(QApplication::translate("PatternLabelUIClass", "/\\", 0));
-        pbLastImageThisIndex->setShortcut(QApplication::translate("PatternLabelUIClass", "Up", 0));
-        pbPrevIndex->setText(QApplication::translate("PatternLabelUIClass", "<-", 0));
-        pbPrevIndex->setShortcut(QApplication::translate("PatternLabelUIClass", "Left", 0));
-        pbNextIndex->setText(QApplication::translate("PatternLabelUIClass", "->", 0));
-        pbNextIndex->setShortcut(QApplication::translate("PatternLabelUIClass", "Right", 0));
         pbNextImageThisIndex->setText(QApplication::translate("PatternLabelUIClass", "\\/", 0));
         pbNextImageThisIndex->setShortcut(QApplication::translate("PatternLabelUIClass", "Down", 0));
+        pbNextIndex->setText(QApplication::translate("PatternLabelUIClass", "->", 0));
+        pbNextIndex->setShortcut(QApplication::translate("PatternLabelUIClass", "Right", 0));
+        pbPrevIndex->setText(QApplication::translate("PatternLabelUIClass", "<-", 0));
+        pbPrevIndex->setShortcut(QApplication::translate("PatternLabelUIClass", "Left", 0));
+        pbLastImageThisIndex->setText(QApplication::translate("PatternLabelUIClass", "/\\", 0));
+        pbLastImageThisIndex->setShortcut(QApplication::translate("PatternLabelUIClass", "Up", 0));
         groupBox_2->setTitle(QString());
         label->setText(QApplication::translate("PatternLabelUIClass", "Index", 0));
     } // retranslateUi
