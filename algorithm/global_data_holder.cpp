@@ -141,6 +141,14 @@ void GlobalDataHolder::loadXml(QString filename)
 		CHECK_FILE(saveXml_qxml(filename, m_rootPath, m_imgInfos), filename);
 	}
 
+	if (!PatternImageInfo::getPatternXmlName().isEmpty())
+	{
+		QFileInfo finfo(PatternImageInfo::getPatternXmlName());
+		if (finfo.exists())
+		{
+			loadPatternXml(finfo.absoluteFilePath());
+		} // end if finfo
+	} // end if has pattern xml name
 }
 
 void GlobalDataHolder::saveXml(QString filename)const
@@ -376,6 +384,8 @@ bool GlobalDataHolder::saveXml_qxml(QString filename, QString root, const std::v
 		return false;
 	writer.writeStartDocument();
 	writer.writeStartElement("document");
+	if (!PatternImageInfo::getPatternXmlName().isEmpty())
+		writer.writeTextElement("pattern-xml", PatternImageInfo::getPatternXmlName());
 	for (const auto& info : imgInfos)
 	{
 		info.toXml(writer);
@@ -393,9 +403,10 @@ void GlobalDataHolder::collect_labelded_patterns(QString folder)
 	static QString mergeName = "pattern_merged";
 	std::vector<std::wstring> xmlNames;
 	ldp::getAllFilesInDir(folder.toStdWString(), xmlNames, L".xml");
-	auto imgInfoBackup = m_imgInfos;
 	auto cfolder = QDir::cleanPath(folder);
 	std::vector<PatternImageInfo> imgInfoMerged;
+	m_lastRun_PatternDir = folder;
+	saveLastRunInfo();
 	
 	for (size_t iXml = 0; iXml < xmlNames.size(); iXml++)
 	{
@@ -405,38 +416,42 @@ void GlobalDataHolder::collect_labelded_patterns(QString folder)
 		// ignore the merged xml itself
 		if (xinfo.baseName().toLower() == mergeName.toLower())
 			continue;
-		loadXml(xmlFullName);
-		for (const auto& info : m_imgInfos)
+		std::vector<PatternImageInfo> imgInfo;
+		if (!loadXml_qxml(xmlFullName, xpath, imgInfo))
+		{
+			CHECK_FILE(loadXml_tixml(xmlFullName, xpath, imgInfo), xmlFullName);
+			CHECK_FILE(saveXml_tixml(xmlFullName + ".backup", xpath, imgInfo), xmlFullName);
+			CHECK_FILE(saveXml_qxml(xmlFullName, xpath, imgInfo), xmlFullName);
+		}
+		for (const auto& info : imgInfo)
 		{
 			if (info.getBaseName() == "" || info.getAttributeType("cloth-types") == "other"
 				|| info.getAttributeType("cloth-types") == "")
 				continue;
 			imgInfoMerged.push_back(info);
-			imgInfoMerged.back().setBaseName(QDir::cleanPath(xpath.right(xpath.size()-cfolder.size()-1))
+			int num = std::max(0, xpath.size() - cfolder.size() - 1);
+			imgInfoMerged.back().setBaseName(QDir::cleanPath(xpath.right(num))
 				+ QDir::separator() + imgInfoMerged.back().getBaseName());
 		} // end for info
 		printf("xml processed: %d/%d\n", iXml, xmlNames.size());
 	} // end for iXml
 
-	m_imgInfos = imgInfoMerged;
 	QDir cdir(folder);
-	saveXml(cdir.absoluteFilePath(mergeName+".xml"));
-
-	m_imgInfos = imgInfoBackup;
+	auto saveName = cdir.absoluteFilePath(mergeName + ".xml");
+	CHECK_FILE(saveXml_qxml(saveName, folder, imgInfoMerged), saveName);
 }
 
 void GlobalDataHolder::loadPatternXml(QString filename)
 {
 	m_patternInfos.clear();
+	m_namePatternMap.clear();
 	QFileInfo finfo(filename);
 	QFileInfo linfo(m_lastRun_PatternDir);
 	if (finfo.absolutePath() != linfo.absoluteFilePath())
 		m_lastRun_PatternDir = finfo.absolutePath();
 	saveLastRunInfo();
-	if (!loadXml_qxml(filename, finfo.absolutePath(), m_patternInfos))
-	{
-		CHECK_FILE(loadXml_tixml(filename, finfo.absolutePath(), m_patternInfos), filename);
-		CHECK_FILE(saveXml_tixml(filename + ".backup", finfo.absolutePath(), m_patternInfos), filename);
-		CHECK_FILE(saveXml_qxml(filename, finfo.absolutePath(), m_patternInfos), filename);
-	}
+	CHECK_FILE(loadXml_qxml(filename, finfo.absolutePath(), m_patternInfos), filename);
+	PatternImageInfo::setPatternXmlName(filename);
+	for (auto& pattern : m_patternInfos)
+		m_namePatternMap.insert(pattern.getBaseName(), &pattern);
 }

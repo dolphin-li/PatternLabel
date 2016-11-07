@@ -37,6 +37,12 @@ public:
 	QString getJdTitle()const { return m_jdTitle; }
 	void setJdMappedPattern(const QString& s) { m_jdMappedPatternName = s; }
 	QString getJdMappedPattern()const { return m_jdMappedPatternName; }
+
+	bool operator == (const PatternImageInfo& r)const;
+	bool operator != (const PatternImageInfo& r)const
+	{
+		return !((*this) == r);
+	}
 public:
 	static bool initialized() { return s_mapInitialized; }
 	static int numAttributes() { return (int)s_typeSet.size(); }
@@ -46,6 +52,9 @@ public:
 	static int numJdAttributes() { return (int)s_jd2typeMap.size(); }
 	static QPair<QString, QString> jdAttributeMapped(QString jdAttName, QString jdType);
 	static void addJdAttributeMap(QString jdAttName, QString attName, QString jdType, QString type);
+	static QPixmap* getImage(QString s);
+	static void setPatternXmlName(QString s) { s_patternXml = s; }
+	static QString getPatternXmlName() { return s_patternXml; }
 protected:
 	static bool constructTypeMaps();
 	static bool constructTypeMaps_tixml(QString filename);
@@ -72,4 +81,5 @@ private:
 		QMap<QString, QString> typeMap;
 	};
 	static QMap<QString, JdTypeMapVal> s_jd2typeMap;
+	static QString s_patternXml;
 };

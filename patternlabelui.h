@@ -6,6 +6,7 @@
 #include <QMutex>
 
 class XmlSaveThread;
+class PatternWindow;
 class PatternLabelUI : public QMainWindow
 {
 	Q_OBJECT
@@ -13,6 +14,7 @@ class PatternLabelUI : public QMainWindow
 public:
 	PatternLabelUI(QWidget *parent = 0);
 	~PatternLabelUI();
+	void requireSaveXml();
 	public slots:
 	void on_actionLoad_image_list_triggered();
 	void on_actionLoad_jd_image_list_triggered();
@@ -35,6 +37,7 @@ private:
 	QMap<QString, QSharedPointer<QButtonGroup>> m_rbTypes;
 	bool m_updateSbIndex;
 	XmlSaveThread* m_xmlSaveThread;
+	QSharedPointer<PatternWindow> m_patternWindow;
 };
 
 #endif // PATTERNLABELUI_H

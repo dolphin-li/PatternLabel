@@ -8,7 +8,8 @@
 #include <QPixmapCache>
 #include <QThread>
 #include <QMutex>
-
+#include <QShortcut>
+#include "PatternWindow.h"
 
 class XmlSaveThread : public QThread
 {
@@ -77,8 +78,12 @@ PatternLabelUI::PatternLabelUI(QWidget *parent)
 {
 	ui.setupUi(this);
 	m_updateSbIndex = true;
+	new QShortcut(QKeySequence(Qt::Key_F11), this, SLOT(showFullScreen()));
+	new QShortcut(QKeySequence(Qt::Key_Escape), this, SLOT(showNormal()));
 	try
 	{
+		m_patternWindow.reset(new PatternWindow());
+		m_patternWindow->setMainUI(this);
 		m_xmlSaveThread = new XmlSaveThread();
 		m_xmlSaveThread->start();
 		g_dataholder.init();
@@ -101,6 +106,7 @@ void PatternLabelUI::closeEvent(QCloseEvent* ev)
 {
 	try
 	{
+		m_patternWindow->close();
 		updateByIndex(g_dataholder.m_curIndex_imgIndex, g_dataholder.m_curIndex_imgIndex);
 		m_xmlSaveThread->requireEnd();
 	} catch (std::exception e)
@@ -158,6 +164,12 @@ void PatternLabelUI::on_actionLoad_jd_image_list_triggered()
 	}
 }
 
+void PatternLabelUI::requireSaveXml()
+{
+	if (g_dataholder.m_curIndex >= 0 && g_dataholder.m_curIndex_imgIndex >= 0)
+		m_xmlSaveThread->requireSave();
+}
+
 void PatternLabelUI::on_actionLoad_xml_triggered()
 {
 	try
@@ -173,6 +185,12 @@ void PatternLabelUI::on_actionLoad_xml_triggered()
 		m_updateSbIndex = false;
 		ui.sbCurIndex->setValue(g_dataholder.m_curIndex);
 		m_updateSbIndex = true;
+
+		if (g_dataholder.m_patternInfos.size())
+		{
+			m_patternWindow->show();
+			m_patternWindow->updateImages();
+		}
 	} catch (std::exception e)
 	{
 		std::cout << e.what() << std::endl;
@@ -226,7 +244,7 @@ void PatternLabelUI::on_actionCollect_pattern_xmls_triggered()
 	try
 	{
 		QString name = QFileDialog::getExistingDirectory(this, "collect pattern xml",
-			g_dataholder.m_lastRun_RootDir);
+			g_dataholder.m_lastRun_PatternDir);
 		if (name.isEmpty())
 			return;
 		g_dataholder.collect_labelded_patterns(name);
@@ -244,10 +262,12 @@ void PatternLabelUI::on_actionLoad_pattern_xml_triggered()
 	try
 	{
 		QString name = QFileDialog::getOpenFileName(this, "load pattern xml",
-			g_dataholder.m_lastRun_RootDir, "*.xml");
+			g_dataholder.m_lastRun_PatternDir, "*.xml");
 		if (name.isEmpty())
 			return;
 		g_dataholder.loadPatternXml(name);
+		m_patternWindow->show();
+		m_patternWindow->updateImages();
 		
 	} catch (std::exception e)
 	{
@@ -324,8 +344,7 @@ void PatternLabelUI::updateByIndex(int index, int imgId)
 {
 	if (g_dataholder.m_imgInfos.size() == 0)
 		return;
-	if (g_dataholder.m_curIndex >= 0 && g_dataholder.m_curIndex_imgIndex >= 0)
-		m_xmlSaveThread->requireSave();
+	requireSaveXml();
 	g_dataholder.m_curIndex = (index + g_dataholder.m_imgInfos.size()) % g_dataholder.m_imgInfos.size();
 	g_dataholder.m_lastRun_imgId = g_dataholder.m_curIndex;
 	const auto& info = g_dataholder.m_imgInfos.at(g_dataholder.m_curIndex);
@@ -350,6 +369,9 @@ void PatternLabelUI::updateByIndex(int index, int imgId)
 	setWindowTitle(g_dataholder.m_rootPath + QString().sprintf("]: %d/%d; %d/%d",
 		g_dataholder.m_curIndex, g_dataholder.m_imgInfos.size(),
 		g_dataholder.m_curIndex_imgIndex, info.numImages()));
+
+	if (!m_patternWindow->isHidden())
+		m_patternWindow->updateImages();
 }
 
 void PatternLabelUI::setupRadioButtons()
@@ -395,6 +417,8 @@ void PatternLabelUI::pbGroupRbTypesClicked(int buttonID)
 				}
 			}
 		} // end for anme
+		if (!m_patternWindow->isHidden())
+			m_patternWindow->updateImages();
 	} catch (std::exception e)
 	{
 		std::cout << e.what() << std::endl;

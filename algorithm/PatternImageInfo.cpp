@@ -13,6 +13,20 @@ PatternImageInfo::~PatternImageInfo()
 
 }
 
+bool PatternImageInfo::operator == (const PatternImageInfo& rhs)const
+{
+	if (m_types.size() != rhs.m_types.size())
+		return false;
+	for (auto& l = m_types.begin(), &r=rhs.m_types.begin(); l != m_types.end(); ++l,++r)
+	{
+		if (l.key() != r.key())
+			return false;
+		if (l.value() != r.value())
+			return false;
+	}
+	return true;
+}
+
 void PatternImageInfo::clear()
 {
 	m_imgNames.clear();
@@ -31,8 +45,11 @@ QString PatternImageInfo::getImageName(int i)const
 
 QPixmap* PatternImageInfo::getImage(int i)const
 {
-	QString name = getImageName(i);
-	
+	return getImage(getImageName(i));
+}
+
+QPixmap* PatternImageInfo::getImage(QString name)
+{
 	QPixmap* p = QPixmapCache::find(name);
 	if (p == nullptr)
 	{
@@ -142,6 +159,10 @@ bool PatternImageInfo::fromXml(QString rootFolder, QXmlStreamReader& reader)
 		} // end if end element
 		else if (reader.isStartElement())
 		{
+			if (n == "pattern-xml")
+			{
+				setPatternXmlName(reader.readElementText());
+			}
 			if (n == "pattern")
 			{
 				auto att = reader.attributes();
@@ -266,6 +287,7 @@ bool PatternImageInfo::fromXml(QString rootFolder, TiXmlElement* parent)
 /////////////////////////////////////////////////////////////////////////////////////////
 QMap<QString, QVector<QString>> PatternImageInfo::s_typeSet;
 QMap<QString, PatternImageInfo::JdTypeMapVal> PatternImageInfo::s_jd2typeMap;
+QString PatternImageInfo::s_patternXml;
 bool PatternImageInfo::s_mapInitialized = PatternImageInfo::constructTypeMaps();
 
 bool PatternImageInfo::constructTypeMaps()

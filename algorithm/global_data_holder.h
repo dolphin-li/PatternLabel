@@ -37,6 +37,7 @@ public:
 
 	////
 	std::vector<PatternImageInfo> m_patternInfos;
+	QMap<QString, PatternImageInfo*> m_namePatternMap;
 	mutable QString m_lastRun_PatternDir;
 };
 

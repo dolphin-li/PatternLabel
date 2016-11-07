@@ -196,6 +196,15 @@
     <ClCompile Include="GeneratedFiles\Release\moc_xlsxdocument.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="PatternWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_PatternWindow.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_PatternWindow.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="patternlabelui.ui">
@@ -212,6 +221,12 @@
     </CustomBuild>
     <CustomBuild Include="algorithm\qtxlsx\xlsxdocument.h">
       <Filter>algorithm\qtxlsx</Filter>
+    </CustomBuild>
+    <CustomBuild Include="PatternWindow.h">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="PatternWindow.ui">
+      <Filter>Form Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
@@ -394,6 +409,9 @@
     </ClInclude>
     <ClInclude Include="algorithm\qtxlsx\xlsxzipwriter_p.h">
       <Filter>algorithm\qtxlsx</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_PatternWindow.h">
+      <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
