@@ -38,11 +38,13 @@ public:
     QAction *actionSave_xml;
     QAction *actionLoad_xml;
     QAction *actionLoad_jd_image_list;
+    QAction *actionCollect_pattern_xmls;
     QWidget *centralWidget;
     QGridLayout *gridLayout;
     ImageViewer *widget;
     QMenuBar *menuBar;
     QMenu *menuFile;
+    QMenu *menuEdit;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
     QDockWidget *dockWidgetRight;
@@ -82,6 +84,8 @@ public:
         actionLoad_xml->setObjectName(QStringLiteral("actionLoad_xml"));
         actionLoad_jd_image_list = new QAction(PatternLabelUIClass);
         actionLoad_jd_image_list->setObjectName(QStringLiteral("actionLoad_jd_image_list"));
+        actionCollect_pattern_xmls = new QAction(PatternLabelUIClass);
+        actionCollect_pattern_xmls->setObjectName(QStringLiteral("actionCollect_pattern_xmls"));
         centralWidget = new QWidget(PatternLabelUIClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         gridLayout = new QGridLayout(centralWidget);
@@ -99,6 +103,8 @@ public:
         menuBar->setGeometry(QRect(0, 0, 1123, 21));
         menuFile = new QMenu(menuBar);
         menuFile->setObjectName(QStringLiteral("menuFile"));
+        menuEdit = new QMenu(menuBar);
+        menuEdit->setObjectName(QStringLiteral("menuEdit"));
         PatternLabelUIClass->setMenuBar(menuBar);
         mainToolBar = new QToolBar(PatternLabelUIClass);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -206,10 +212,12 @@ public:
         PatternLabelUIClass->addDockWidget(static_cast<Qt::DockWidgetArea>(8), dockWidgetBottom);
 
         menuBar->addAction(menuFile->menuAction());
+        menuBar->addAction(menuEdit->menuAction());
         menuFile->addAction(actionLoad_image_list);
         menuFile->addAction(actionSave_xml);
         menuFile->addAction(actionLoad_xml);
         menuFile->addAction(actionLoad_jd_image_list);
+        menuEdit->addAction(actionCollect_pattern_xmls);
 
         retranslateUi(PatternLabelUIClass);
 
@@ -223,7 +231,9 @@ public:
         actionSave_xml->setText(QApplication::translate("PatternLabelUIClass", "save xml", 0));
         actionLoad_xml->setText(QApplication::translate("PatternLabelUIClass", "load xml", 0));
         actionLoad_jd_image_list->setText(QApplication::translate("PatternLabelUIClass", "load jd image list", 0));
+        actionCollect_pattern_xmls->setText(QApplication::translate("PatternLabelUIClass", "collect pattern xmls", 0));
         menuFile->setTitle(QApplication::translate("PatternLabelUIClass", "file", 0));
+        menuEdit->setTitle(QApplication::translate("PatternLabelUIClass", "pattern", 0));
         groupBox->setTitle(QApplication::translate("PatternLabelUIClass", "images", 0));
         pbLastImageThisIndex->setText(QApplication::translate("PatternLabelUIClass", "/\\", 0));
         pbLastImageThisIndex->setShortcut(QApplication::translate("PatternLabelUIClass", "Up", 0));

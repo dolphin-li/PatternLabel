@@ -38,7 +38,14 @@
     <addaction name="actionLoad_xml"/>
     <addaction name="actionLoad_jd_image_list"/>
    </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>pattern</string>
+    </property>
+    <addaction name="actionCollect_pattern_xmls"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -256,6 +263,11 @@
   <action name="actionLoad_jd_image_list">
    <property name="text">
     <string>load jd image list</string>
+   </property>
+  </action>
+  <action name="actionCollect_pattern_xmls">
+   <property name="text">
+    <string>collect pattern xmls</string>
    </property>
   </action>
  </widget>

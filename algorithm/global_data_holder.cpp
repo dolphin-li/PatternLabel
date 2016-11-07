@@ -68,6 +68,13 @@ void GlobalDataHolder::loadImageList(QString filename)
 	QFileInfo finfo(filename);
 	m_xmlExportPureName = finfo.baseName() + ".xml";
 	m_rootPath = finfo.absolutePath();
+	QFileInfo rinfo(m_rootPath), linfo(m_lastRun_RootDir);
+	if (rinfo.absoluteFilePath() != linfo.absoluteFilePath())
+	{
+		m_lastRun_RootDir = m_rootPath;
+		m_lastRun_imgId = 0;
+	}
+	saveLastRunInfo();
 
 	std::wstring lineBuffer;
 	do
@@ -100,13 +107,6 @@ void GlobalDataHolder::loadImageList(QString filename)
 		m_curIndex = 0;
 		m_curIndex_imgIndex = 0;
 	} while (!fstm_s.eof());
-
-	QFileInfo rinfo(m_rootPath), linfo(m_lastRun_RootDir);
-	if (rinfo.absoluteDir() != linfo.absoluteDir())
-	{
-		m_lastRun_RootDir = m_rootPath;
-		m_lastRun_imgId = 0;
-	}
 }
 
 void GlobalDataHolder::loadXml(QString filename)
@@ -115,6 +115,14 @@ void GlobalDataHolder::loadXml(QString filename)
 	QFileInfo finfo(filename);
 	m_xmlExportPureName = finfo.baseName() + ".xml";
 	m_rootPath = finfo.absolutePath();
+	QFileInfo rinfo(m_rootPath), linfo(m_lastRun_RootDir);
+	if (rinfo.absoluteFilePath() != linfo.absoluteFilePath())
+	{
+		m_lastRun_RootDir = m_rootPath;
+		m_lastRun_imgId = 0;
+	}
+	saveLastRunInfo();
+
 	if (!loadXml_qxml(filename))
 	{
 		CHECK_FILE(loadXml_tixml(filename), filename);
@@ -122,12 +130,6 @@ void GlobalDataHolder::loadXml(QString filename)
 		CHECK_FILE(saveXml_qxml(filename), filename);
 	}
 
-	QFileInfo rinfo(m_rootPath), linfo(m_lastRun_RootDir);
-	if (rinfo.absoluteDir() != linfo.absoluteDir())
-	{
-		m_lastRun_RootDir = m_rootPath;
-		m_lastRun_imgId = 0;
-	}
 }
 
 void GlobalDataHolder::saveXml(QString filename)const
@@ -200,11 +202,12 @@ void GlobalDataHolder::loadJdImageList(QString filename)
 	m_xmlExportPureName = finfo.baseName() + ".xml";
 	m_rootPath = finfo.absolutePath();
 	QFileInfo rinfo(m_rootPath), linfo(m_lastRun_RootDir);
-	if (rinfo.absoluteDir() != linfo.absoluteDir())
+	if (rinfo.absoluteFilePath() != linfo.absoluteFilePath())
 	{
 		m_lastRun_RootDir = m_rootPath;
 		m_lastRun_imgId = 0;
 	}
+	saveLastRunInfo();
 	
 	// load xlsx
 	QXlsx::Document doc(filename);
@@ -371,4 +374,37 @@ bool GlobalDataHolder::saveXml_qxml(QString filename)const
 	writer.writeEndElement();
 	writer.writeEndDocument();
 	return true;
+}
+
+void GlobalDataHolder::collect_labelded_patterns(QString folder)
+{
+	std::vector<std::wstring> xmlNames;
+	ldp::getAllFilesInDir(folder.toStdWString(), xmlNames, L".xml");
+	auto imgInfoBackup = m_imgInfos;
+	auto cfolder = QDir::cleanPath(folder);
+	std::vector<PatternImageInfo> imgInfoMerged;
+	
+	for (size_t iXml = 0; iXml < xmlNames.size(); iXml++)
+	{
+		QString xmlFullName = QString().fromStdWString(xmlNames[iXml]);
+		loadXml(xmlFullName);
+		QFileInfo xinfo(xmlFullName);
+		auto xpath = xinfo.absolutePath();
+		for (const auto& info : m_imgInfos)
+		{
+			if (info.getBaseName() == "" || info.getAttributeType("cloth-types") == "other"
+				|| info.getAttributeType("cloth-types") == "")
+				continue;
+			imgInfoMerged.push_back(info);
+			imgInfoMerged.back().setBaseName(QDir::cleanPath(xpath.right(xpath.size()-cfolder.size()-1))
+				+ QDir::separator() + imgInfoMerged.back().getBaseName());
+		} // end for info
+		printf("xml processed: %d/%d\n", iXml, xmlNames.size());
+	} // end for iXml
+
+	m_imgInfos = imgInfoMerged;
+	QDir cdir(folder);
+	saveXml(cdir.absoluteFilePath("pattern_merged.xml"));
+
+	m_imgInfos = imgInfoBackup;
 }

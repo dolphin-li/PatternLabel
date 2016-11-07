@@ -217,6 +217,24 @@ void PatternLabelUI::on_actionSave_xml_triggered()
 	}
 }
 
+void PatternLabelUI::on_actionCollect_pattern_xmls_triggered()
+{
+	try
+	{
+		QString name = QFileDialog::getExistingDirectory(this, "collect pattern xml",
+			g_dataholder.m_lastRun_RootDir);
+		if (name.isEmpty())
+			return;
+		g_dataholder.collect_labelded_patterns(name);
+	} catch (std::exception e)
+	{
+		std::cout << e.what() << std::endl;
+	} catch (...)
+	{
+		std::cout << "unknown error" << std::endl;
+	}
+}
+
 void PatternLabelUI::on_pbPrevIndex_clicked()
 {
 	try

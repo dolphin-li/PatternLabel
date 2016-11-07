@@ -104,7 +104,9 @@ bool PatternImageInfo::toXml(QXmlStreamWriter& writer)const
 	if (!getBaseName().isEmpty())
 		writer.writeAttribute("name", getBaseName());
 	if (!m_jdId.isEmpty())
-		writer.writeAttribute("jdId", getJdId());
+		writer.writeAttribute("jdId", m_jdId);
+	if (!m_jdMappedPatternName.isEmpty())
+		writer.writeAttribute("mapped-pattern", m_jdMappedPatternName);
 	if (!m_jdTitle.isEmpty())
 		writer.writeTextElement("jdTitle", getJdTitle());
 	writer.writeTextElement("url", getUrl());
@@ -150,6 +152,8 @@ bool PatternImageInfo::fromXml(QString rootFolder, QXmlStreamReader& reader)
 						m_baseName = v.value().toString();
 					else if (v.name() == "jdId")
 						m_jdId = v.value().toString();
+					else if (v.name() == "mapped-pattern")
+						m_jdMappedPatternName = v.value().toString();
 				} // end for v
 			} // end if n == pattern
 			else if (n == "image")
@@ -197,7 +201,7 @@ bool PatternImageInfo::toXml(TiXmlNode* parent)const
 			|| baseName[i] == '\'' || baseName[i] == '\"' || baseName[i] == '&'
 			|| baseName[i] == '#' || baseName[i] == '%' || baseName[i] == '@'
 			|| baseName[i] == '!' || baseName[i] == '*' || baseName[i] == '$'
-			|| baseName[i] == '^' || baseName[i] == '+')
+			|| baseName[i] == '^' || baseName[i] == '+' || baseName[i] == ',')
 			baseName[i] = '-';
 	}
 	parent->SetValue(baseName.toStdString().c_str());

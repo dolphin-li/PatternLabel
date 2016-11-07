@@ -18,6 +18,7 @@ public:
 	void on_actionLoad_jd_image_list_triggered();
 	void on_actionLoad_xml_triggered();
 	void on_actionSave_xml_triggered();
+	void on_actionCollect_pattern_xmls_triggered();
 	void on_pbPrevIndex_clicked();
 	void on_pbNextIndex_clicked();
 	void on_pbLastImageThisIndex_clicked();

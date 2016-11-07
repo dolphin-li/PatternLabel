@@ -35,6 +35,8 @@ public:
 	QString getJdId()const { return m_jdId; }
 	void setJdTitle(const QString& s) { m_jdTitle = s; }
 	QString getJdTitle()const { return m_jdTitle; }
+	void setJdMappedPattern(const QString& s) { m_jdMappedPatternName = s; }
+	QString getJdMappedPattern()const { return m_jdMappedPatternName; }
 public:
 	static bool initialized() { return s_mapInitialized; }
 	static int numAttributes() { return (int)s_typeSet.size(); }
@@ -63,6 +65,7 @@ private:
 	/// for jd images
 	QString m_jdTitle;
 	QString m_jdId;
+	QString m_jdMappedPatternName;
 	struct JdTypeMapVal
 	{
 		QString mappedName;
