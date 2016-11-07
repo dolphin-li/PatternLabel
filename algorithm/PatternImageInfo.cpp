@@ -269,7 +269,7 @@ bool PatternImageInfo::fromXml(QString rootFolder, TiXmlElement* parent)
 				auto& types = attributeTypes(iter.key());
 				auto t_iter = qFind(types.begin(), types.end(), att.c_str());
 				if (t_iter == types.end())
-					printf("warning: invalid type %s\n", att.c_str());
+					std::cout << "warning: invalid type " << att << std::endl;
 				else
 					iter.value() = int(t_iter - types.begin());
 			} // end if name
@@ -311,7 +311,7 @@ bool PatternImageInfo::constructTypeMaps_tixml(QString filename)
 	TiXmlDocument doc;
 	if (!doc.LoadFile(filename.toStdString().c_str()))
 	{
-		wprintf(L"File not exist: %s\n", filename.toStdWString().c_str());
+		std::cout << "File not exist: " << filename.toStdString() << std::endl;
 		return false;
 	}
 
@@ -336,7 +336,7 @@ bool PatternImageInfo::constructTypeMaps_qxml(QString filename)
 	QFile file(filename);
 	if (!file.open(QIODevice::ReadOnly))
 	{
-		wprintf(L"File not exist: %s\n", filename.toStdWString().c_str());
+		std::cout << "File not exist: " << filename.toStdString() << std::endl;
 		return false;
 	}
 	QXmlStreamReader reader(&file);
@@ -397,12 +397,13 @@ bool PatternImageInfo::constructTypeMaps_qxml(QString filename)
 	} // end while
 	if (s_typeSet.size() == 0)
 	{
-		wprintf(L"Error load [%s]: %s\n", filename.toStdWString().c_str(), L"illegal xml");
+		std::cout << "Error load [" << filename.toStdString() << "]: illegal xml" << std::endl;
 		return false;
 	}
 	if (reader.hasError())
 	{
-		wprintf(L"Error load [%s]: %s\n", filename.toStdWString().c_str(), reader.errorString().toStdWString().c_str());
+		std::cout << "Error load [" << filename.toStdString() << "]: " << 
+			reader.errorString().toStdString() << std::endl;
 		return false;
 	}
 	return true;
@@ -413,7 +414,7 @@ bool PatternImageInfo::constructTypeMaps_qxml_save(QString filename)
 	QFile file(filename);
 	if (!file.open(QIODevice::WriteOnly))
 	{
-		wprintf(L"File not exist: %s\n", filename.toStdWString().c_str());
+		std::cout << "File not exist: " << filename.toStdString() << std::endl;
 		return false;
 	}
 	QXmlStreamWriter writer(&file);
@@ -451,7 +452,7 @@ bool PatternImageInfo::constructTypeMaps_qxml_save(QString filename)
 	file.close();
 	if (writer.hasError())
 	{
-		wprintf(L"Error write [%s]\n", filename.toStdWString().c_str());
+		std::cout << "Error write [" << filename.toStdString() << "]" << std::endl;
 		return false;
 	}
 	return true;

@@ -105,8 +105,7 @@ void GlobalDataHolder::loadImageList(QString filename)
 		ldp::getAllFilesInDir(ldp::fullfile(m_rootPath.toStdWString(), 
 			info.getBaseName().toStdWString()), imgs, L"png");
 		if (nImgs != imgs.size())
-			wprintf(L"warning: size of %s not matched: %d vs %d\n", 
-			info.getBaseName().toStdWString().c_str(), nImgs, imgs.size());
+			std::cout << "warning: size of " << info.getBaseName().toStdString() << " not matched" << std::endl;
 		for (int i = 0; i < nImgs; i++)
 			std::getline(fstm_s, lineBuffer);
 		for (auto img : imgs)
@@ -335,21 +334,20 @@ bool GlobalDataHolder::loadXml_qxml(QString filename, QString root, std::vector<
 	QFile file(filename);
 	if (!file.open(QIODevice::ReadOnly))
 	{
-		wprintf(L"File not exist: %s\n", filename.toStdWString().c_str());
+		std::cout << "File not exist: " << filename.toStdString() << std::endl;
 		return false;
 	}
 	QXmlStreamReader reader(&file);
 	if (reader.hasError())
 	{
-		wprintf(L"read error [%s]: %s\n", filename.toStdWString().c_str(), 
-			reader.errorString().toStdWString().c_str());
+		std::cout << "read error [" << filename.toStdString() << "]: "
+			<< reader.errorString().toStdString() << std::endl;
 		return false;
 	}
 	reader.readNextStartElement();
 	if (reader.name() != "document")
 	{
-		wprintf(L"read error [%s]: %s\n", filename.toStdWString().c_str(),
-			L"root name must be <document>");
+		std::cout << "read error [" << filename.toStdString() << "]: root name must be <document>" << std::endl;
 		return false;
 	}
 	while (!reader.isEndDocument())
@@ -360,8 +358,8 @@ bool GlobalDataHolder::loadXml_qxml(QString filename, QString root, std::vector<
 			imgInfos.push_back(info);
 		if (reader.hasError())
 		{
-			wprintf(L"read error [%s]: %s\n", filename.toStdWString().c_str(),
-				reader.errorString().toStdWString().c_str());
+			std::cout << "read error [" << filename.toStdString() << "]: "
+				<< reader.errorString().toStdString() << std::endl;
 			imgInfos.clear();
 			return false;
 		}
@@ -375,7 +373,7 @@ bool GlobalDataHolder::saveXml_qxml(QString filename, QString root, const std::v
 	QFile file(filename);
 	if (!file.open(QIODevice::WriteOnly))
 	{
-		wprintf(L"File not exist: %s\n", filename.toStdWString().c_str());
+		std::cout << "File not exist: " << filename.toStdString() << std::endl;
 		return false;
 	}
 	QXmlStreamWriter writer(&file);
@@ -433,7 +431,7 @@ void GlobalDataHolder::collect_labelded_patterns(QString folder)
 			imgInfoMerged.back().setBaseName(QDir::cleanPath(xpath.right(num))
 				+ QDir::separator() + imgInfoMerged.back().getBaseName());
 		} // end for info
-		printf("xml processed: %d/%d\n", iXml, xmlNames.size());
+		std::cout << "xml processed: " << iXml << "/" << xmlNames.size() << std::endl;
 	} // end for iXml
 
 	QDir cdir(folder);

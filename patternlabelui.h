@@ -4,6 +4,7 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_patternlabelui.h"
 #include <QMutex>
+#include <QProcess>
 
 class XmlSaveThread;
 class PatternWindow;

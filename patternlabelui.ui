@@ -53,7 +53,7 @@
    <property name="minimumSize">
     <size>
      <width>356</width>
-     <height>235</height>
+     <height>354</height>
     </size>
    </property>
    <attribute name="dockWidgetArea">
@@ -129,7 +129,7 @@
        </layout>
       </widget>
      </item>
-     <item row="3" column="0">
+     <item row="4" column="0">
       <spacer name="verticalSpacer">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -141,6 +141,9 @@
         </size>
        </property>
       </spacer>
+     </item>
+     <item row="3" column="0">
+      <widget class="QConsole" name="console"/>
      </item>
     </layout>
    </widget>
@@ -183,6 +186,11 @@
    <extends>QWidget</extends>
    <header>imageviewer.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QConsole</class>
+   <extends>QTextEdit</extends>
+   <header>qconsole.h</header>
   </customwidget>
  </customwidgets>
  <resources>

@@ -11,6 +11,65 @@
 #include <QShortcut>
 #include "PatternWindow.h"
 
+class QDebugStream : public std::basic_streambuf<char>
+{
+public:
+	QDebugStream(std::ostream &stream, QConsole* text_edit, QColor color) : m_stream(stream)
+	{
+		log_window = text_edit;
+		m_old_buf = stream.rdbuf();
+		stream.rdbuf(this);
+		m_color = color;
+	}
+	~QDebugStream()
+	{
+		// output anything that is left
+		if (!m_string.empty())
+			log_window->append(m_string.c_str());
+
+		m_stream.rdbuf(m_old_buf);
+	}
+
+protected:
+	virtual int_type overflow(int_type v)
+	{
+		if (v == '\n')
+		{
+			log_window->append(m_string.c_str());
+			m_string.erase(m_string.begin(), m_string.end());
+		}
+		else
+			m_string += v;
+
+		return v;
+	}
+
+	virtual std::streamsize xsputn(const char *p, std::streamsize n)
+	{
+		m_string.append(p, p + n);
+
+		int pos = 0;
+		while (pos != std::string::npos)
+		{
+			pos = m_string.find('\n');
+			if (pos != std::string::npos)
+			{
+				std::string tmp(m_string.begin(), m_string.begin() + pos);
+				log_window->setTextColor(m_color);
+				log_window->append(tmp.c_str());
+				m_string.erase(m_string.begin(), m_string.begin() + pos + 1);
+			}
+		}
+		return n;
+	}
+private:
+	std::ostream &m_stream;
+	std::streambuf *m_old_buf;
+	std::string m_string;
+	QConsole* log_window;
+	QColor m_color;
+};
+
 class XmlSaveThread : public QThread
 {
 public:
@@ -31,7 +90,7 @@ public:
 		{
 			if (!isSaving)
 			{
-				printf("thread end\n");
+				std::cout  << "thread end" << std::endl;
 				break;
 			}
 		}
@@ -55,11 +114,11 @@ protected:
 				QFileInfo finfo;
 				finfo.setFile(g_dataholder.m_rootPath, g_dataholder.m_xmlExportPureName);
 #ifndef NDEBUG
-				wprintf(L"saving: %s\n", finfo.absoluteFilePath().toStdWString().c_str());
+				std::cout << "saving: " << finfo.absoluteFilePath().toStdString() << std::endl;
 #endif
 				g_dataholder.saveXml(finfo.absoluteFilePath());
 #ifndef NDEBUG
-				wprintf(L"saved\n");
+				std::cout << "saved" << std::endl;
 #endif
 				mutex.lock();
 				isSaving = false;
@@ -69,7 +128,7 @@ protected:
 			if (!isSaving && needEnd)
 				break;
 		} // end while 1
-		printf("SaveXmlThread ended\n");
+		std::cout << "SaveXmlThread ended" << std::endl;
 	}
 }; // XmlSaveThread
 
@@ -78,6 +137,8 @@ PatternLabelUI::PatternLabelUI(QWidget *parent)
 {
 	ui.setupUi(this);
 	m_updateSbIndex = true;
+	new QDebugStream(std::cout, ui.console, Qt::gray);
+	new QDebugStream(std::cerr, ui.console, Qt::red);
 	new QShortcut(QKeySequence(Qt::Key_F11), this, SLOT(showFullScreen()));
 	new QShortcut(QKeySequence(Qt::Key_Escape), this, SLOT(showNormal()));
 	try
@@ -90,10 +151,10 @@ PatternLabelUI::PatternLabelUI(QWidget *parent)
 		setupRadioButtons();
 	} catch (std::exception e)
 	{
-		std::cout << e.what() << std::endl;
+		std::cerr << e.what() << std::endl;
 	} catch (...)
 	{
-		std::cout << "..." << std::endl;
+		std::cerr << "..." << std::endl;
 	}
 }
 
@@ -107,7 +168,7 @@ void PatternLabelUI::closeEvent(QCloseEvent* ev)
 	try
 	{
 		m_patternWindow->close();
-		updateByIndex(g_dataholder.m_curIndex_imgIndex, g_dataholder.m_curIndex_imgIndex);
+		//updateByIndex(g_dataholder.m_curIndex_imgIndex, g_dataholder.m_curIndex_imgIndex);
 		m_xmlSaveThread->requireEnd();
 	} catch (std::exception e)
 	{
@@ -228,7 +289,7 @@ void PatternLabelUI::on_actionSave_xml_triggered()
 			name.append(".xml");
 		QFileInfo rinfo(name), linfo(g_dataholder.m_rootPath);
 		if (rinfo.absoluteDir() != linfo.absoluteDir())
-			printf("warning: you seemed to save xml to a wrong folder!\n");
+			std::cout << "warning: you seemed to save xml to a wrong folder!\n";
 		g_dataholder.saveXml(name);
 	} catch (std::exception e)
 	{

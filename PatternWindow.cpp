@@ -64,7 +64,7 @@ void PatternWindow::updateImages()
 	} // end for info
 	if (selId >= 0)
 		ui.listWidget->setItemSelected(ui.listWidget->item(selId), true);
-	printf("%d images founded\n", m_icons.size());
+	std::cout << m_icons.size() << " images founded" << std::endl;
 }
 
 void PatternWindow::listItemSelectionChanged()

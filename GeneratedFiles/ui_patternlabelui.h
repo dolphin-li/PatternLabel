@@ -27,6 +27,7 @@
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QWidget>
 #include "imageviewer.h"
+#include "qconsole.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -60,6 +61,7 @@ public:
     QLabel *label;
     QSpinBox *sbCurIndex;
     QSpacerItem *verticalSpacer;
+    QConsole *console;
 
     void setupUi(QMainWindow *PatternLabelUIClass)
     {
@@ -103,7 +105,7 @@ public:
         PatternLabelUIClass->setStatusBar(statusBar);
         dockWidgetRight = new QDockWidget(PatternLabelUIClass);
         dockWidgetRight->setObjectName(QStringLiteral("dockWidgetRight"));
-        dockWidgetRight->setMinimumSize(QSize(356, 235));
+        dockWidgetRight->setMinimumSize(QSize(356, 354));
         dockWidgetContentsRight = new QWidget();
         dockWidgetContentsRight->setObjectName(QStringLiteral("dockWidgetContentsRight"));
         gridLayout_3 = new QGridLayout(dockWidgetContentsRight);
@@ -160,7 +162,12 @@ public:
 
         verticalSpacer = new QSpacerItem(20, 522, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
-        gridLayout_3->addItem(verticalSpacer, 3, 0, 1, 1);
+        gridLayout_3->addItem(verticalSpacer, 4, 0, 1, 1);
+
+        console = new QConsole(dockWidgetContentsRight);
+        console->setObjectName(QStringLiteral("console"));
+
+        gridLayout_3->addWidget(console, 3, 0, 1, 1);
 
         dockWidgetRight->setWidget(dockWidgetContentsRight);
         PatternLabelUIClass->addDockWidget(static_cast<Qt::DockWidgetArea>(2), dockWidgetRight);
