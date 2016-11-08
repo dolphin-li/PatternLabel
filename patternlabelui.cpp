@@ -291,6 +291,7 @@ void PatternLabelUI::on_actionSave_xml_triggered()
 		if (rinfo.absoluteDir() != linfo.absoluteDir())
 			std::cout << "warning: you seemed to save xml to a wrong folder!\n";
 		g_dataholder.saveXml(name);
+		std::cout << "saved: " << name.toStdString() << std::endl;
 	} catch (std::exception e)
 	{
 		std::cout << e.what() << std::endl;
@@ -330,6 +331,50 @@ void PatternLabelUI::on_actionLoad_pattern_xml_triggered()
 		m_patternWindow->show();
 		m_patternWindow->updateImages();
 		
+	} catch (std::exception e)
+	{
+		std::cout << e.what() << std::endl;
+	} catch (...)
+	{
+		std::cout << "unknown error" << std::endl;
+	}
+}
+
+void PatternLabelUI::on_actionUnique_patterns_triggered()
+{
+	try
+	{
+		g_dataholder.savePatternXml(g_dataholder.m_inputPatternXmlName+"_before_unique");
+		std::cout << "patterns backup done" << std::endl;
+		g_dataholder.uniquePatterns();
+		g_dataholder.savePatternXml(g_dataholder.m_inputPatternXmlName);
+		std::cout << "patterns saved: " << g_dataholder.m_inputPatternXmlName.toStdString() << std::endl;
+
+	} catch (std::exception e)
+	{
+		std::cout << e.what() << std::endl;
+	} catch (...)
+	{
+		std::cout << "unknown error" << std::endl;
+	}
+}
+
+void PatternLabelUI::on_actionSave_pattern_xml_triggered()
+{
+	try
+	{
+		QString name = QFileDialog::getSaveFileName(this, "save pattern xml",
+			g_dataholder.m_lastRun_PatternDir, "*.xml");
+		if (name.isEmpty())
+			return;
+		if (!name.endsWith(".xml"))
+			name.append(".xml");
+		QFileInfo rinfo(name), linfo(g_dataholder.m_inputPatternXmlName);
+		if (rinfo.absoluteDir() != linfo.absoluteDir())
+			std::cout << "warning: you seemed to save xml to a wrong folder!\n";
+		g_dataholder.savePatternXml(name);
+		std::cout << "patterns saved: " << name.toStdString() << std::endl;
+
 	} catch (std::exception e)
 	{
 		std::cout << e.what() << std::endl;

@@ -40,6 +40,8 @@ public:
     QAction *actionLoad_jd_image_list;
     QAction *actionCollect_pattern_xmls;
     QAction *actionLoad_pattern_xml;
+    QAction *actionUnique_patterns;
+    QAction *actionSave_pattern_xml;
     QWidget *centralWidget;
     QGridLayout *gridLayout;
     ImageViewer *widget;
@@ -80,6 +82,10 @@ public:
         actionCollect_pattern_xmls->setObjectName(QStringLiteral("actionCollect_pattern_xmls"));
         actionLoad_pattern_xml = new QAction(PatternLabelUIClass);
         actionLoad_pattern_xml->setObjectName(QStringLiteral("actionLoad_pattern_xml"));
+        actionUnique_patterns = new QAction(PatternLabelUIClass);
+        actionUnique_patterns->setObjectName(QStringLiteral("actionUnique_patterns"));
+        actionSave_pattern_xml = new QAction(PatternLabelUIClass);
+        actionSave_pattern_xml->setObjectName(QStringLiteral("actionSave_pattern_xml"));
         centralWidget = new QWidget(PatternLabelUIClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         gridLayout = new QGridLayout(centralWidget);
@@ -180,6 +186,8 @@ public:
         menuFile->addAction(actionLoad_jd_image_list);
         menuEdit->addAction(actionCollect_pattern_xmls);
         menuEdit->addAction(actionLoad_pattern_xml);
+        menuEdit->addAction(actionUnique_patterns);
+        menuEdit->addAction(actionSave_pattern_xml);
 
         retranslateUi(PatternLabelUIClass);
 
@@ -195,6 +203,8 @@ public:
         actionLoad_jd_image_list->setText(QApplication::translate("PatternLabelUIClass", "load jd image list", 0));
         actionCollect_pattern_xmls->setText(QApplication::translate("PatternLabelUIClass", "collect pattern xmls", 0));
         actionLoad_pattern_xml->setText(QApplication::translate("PatternLabelUIClass", "load pattern xml", 0));
+        actionUnique_patterns->setText(QApplication::translate("PatternLabelUIClass", "unique patterns", 0));
+        actionSave_pattern_xml->setText(QApplication::translate("PatternLabelUIClass", "save pattern xml", 0));
         menuFile->setTitle(QApplication::translate("PatternLabelUIClass", "file", 0));
         menuEdit->setTitle(QApplication::translate("PatternLabelUIClass", "pattern", 0));
         groupBox->setTitle(QApplication::translate("PatternLabelUIClass", "images", 0));

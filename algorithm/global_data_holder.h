@@ -18,6 +18,8 @@ public:
 	// ignore those "other" types and merge valid types.
 	void collect_labelded_patterns(QString folder);
 	void loadPatternXml(QString filename);
+	void savePatternXml(QString filename)const;
+	void uniquePatterns();
 protected:
 	void loadLastRunInfo();
 	void saveLastRunInfo()const;
@@ -39,6 +41,7 @@ public:
 	std::vector<PatternImageInfo> m_patternInfos;
 	QMap<QString, PatternImageInfo*> m_namePatternMap;
 	mutable QString m_lastRun_PatternDir;
+	QString m_inputPatternXmlName;
 };
 
 extern GlobalDataHolder g_dataholder;

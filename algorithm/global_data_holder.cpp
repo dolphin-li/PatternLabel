@@ -152,7 +152,11 @@ void GlobalDataHolder::loadXml(QString filename)
 
 void GlobalDataHolder::saveXml(QString filename)const
 {
-	CHECK_FILE(saveXml_qxml(filename, m_rootPath, m_imgInfos), filename);
+	QFileInfo finfo(filename);
+	QFileInfo linfo(m_lastRun_RootDir);
+	if (finfo.absolutePath() != linfo.absoluteFilePath())
+		m_lastRun_RootDir = finfo.absolutePath();
+	CHECK_FILE(saveXml_qxml(filename, finfo.absolutePath(), m_imgInfos), filename);
 	saveLastRunInfo();
 }
 
@@ -443,6 +447,7 @@ void GlobalDataHolder::loadPatternXml(QString filename)
 {
 	m_patternInfos.clear();
 	m_namePatternMap.clear();
+	m_inputPatternXmlName = filename;
 	QFileInfo finfo(filename);
 	QFileInfo linfo(m_lastRun_PatternDir);
 	if (finfo.absolutePath() != linfo.absoluteFilePath())
@@ -452,4 +457,31 @@ void GlobalDataHolder::loadPatternXml(QString filename)
 	PatternImageInfo::setPatternXmlName(filename);
 	for (auto& pattern : m_patternInfos)
 		m_namePatternMap.insert(pattern.getBaseName(), &pattern);
+}
+
+void GlobalDataHolder::savePatternXml(QString filename)const
+{
+	QFileInfo finfo(filename);
+	QFileInfo linfo(m_lastRun_PatternDir);
+	if (finfo.absolutePath() != linfo.absoluteFilePath())
+		m_lastRun_PatternDir = finfo.absolutePath();
+	CHECK_FILE(saveXml_qxml(filename, finfo.absolutePath(), m_patternInfos), filename);
+	saveLastRunInfo();
+}
+
+void GlobalDataHolder::uniquePatterns()
+{
+	std::cout << "before cleaning: " << m_patternInfos.size() << std::endl;
+	QMap<QString, PatternImageInfo> urlPatternMap;
+	for (const auto& info : m_patternInfos)
+	if (urlPatternMap.find(info.getUrl()) == urlPatternMap.end())
+		urlPatternMap.insert(info.getUrl(), info);
+
+	m_patternInfos.clear();
+	for (const auto& info : urlPatternMap)
+		m_patternInfos.push_back(info);
+	m_namePatternMap.clear();
+	for (auto& pattern : m_patternInfos)
+		m_namePatternMap.insert(pattern.getBaseName(), &pattern);
+	std::cout << "after cleaning: " << m_patternInfos.size() << std::endl;
 }

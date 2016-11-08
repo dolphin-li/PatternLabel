@@ -44,6 +44,8 @@
     </property>
     <addaction name="actionCollect_pattern_xmls"/>
     <addaction name="actionLoad_pattern_xml"/>
+    <addaction name="actionUnique_patterns"/>
+    <addaction name="actionSave_pattern_xml"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -176,6 +178,16 @@
   <action name="actionLoad_pattern_xml">
    <property name="text">
     <string>load pattern xml</string>
+   </property>
+  </action>
+  <action name="actionUnique_patterns">
+   <property name="text">
+    <string>unique patterns</string>
+   </property>
+  </action>
+  <action name="actionSave_pattern_xml">
+   <property name="text">
+    <string>save pattern xml</string>
    </property>
   </action>
  </widget>
