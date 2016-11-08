@@ -27,6 +27,7 @@ protected:
 	static bool saveXml_tixml(QString filename, QString root, const std::vector<PatternImageInfo>& imgInfos);
 	static bool loadXml_qxml(QString filename, QString root, std::vector<PatternImageInfo>& imgInfos);
 	static bool saveXml_qxml(QString filename, QString root, const std::vector<PatternImageInfo>& imgInfos);
+	static void autoSetGenders(std::vector<PatternImageInfo>& infos, QString fileBaseName);
 public:
 	std::vector<PatternImageInfo> m_imgInfos;
 	QString m_rootPath;

@@ -497,7 +497,7 @@ void PatternLabelUI::setupRadioButtons()
 		{
 			QRadioButton* btn = new QRadioButton(box);
 			btn->setText(types[i]);
-			layout->addWidget(btn, i / 2, i % 2);
+			layout->addWidget(btn, i / 3, i % 3);
 			m_rbTypes[name]->addButton(btn);
 		} // type
 		connect(m_rbTypes[name].data(), SIGNAL(buttonClicked(int)), 

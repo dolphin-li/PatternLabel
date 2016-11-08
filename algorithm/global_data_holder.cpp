@@ -117,6 +117,40 @@ void GlobalDataHolder::loadImageList(QString filename)
 		m_curIndex = 0;
 		m_curIndex_imgIndex = 0;
 	} while (!fstm_s.eof());
+	autoSetGenders(m_imgInfos, m_xmlExportPureName);
+	saveXml(QDir::cleanPath(m_rootPath + QDir::separator() + m_xmlExportPureName));
+}
+
+void GlobalDataHolder::autoSetGenders(std::vector<PatternImageInfo>& infos, QString fileBaseName)
+{
+	for (auto& info : infos)
+	{
+		if (info.getAttributeType("gender-types") == "unknown")
+		{
+			auto b = info.getBaseName();
+			if (b.contains("_w") || b.contains("_nv"))
+			{
+				info.setAttributeType("gender-types", "female");
+				break;
+			}
+			if (b.contains("_m") || b.contains("_nan"))
+			{
+				info.setAttributeType("gender-types", "male");
+				break;
+			}
+			b = fileBaseName;
+			if (b.contains("_w") || b.contains("_nv"))
+			{
+				info.setAttributeType("gender-types", "female");
+				break;
+			}
+			if (b.contains("_m") || b.contains("_nan"))
+			{
+				info.setAttributeType("gender-types", "male");
+				break;
+			}
+		}
+	}
 }
 
 void GlobalDataHolder::loadXml(QString filename)
@@ -139,6 +173,8 @@ void GlobalDataHolder::loadXml(QString filename)
 		CHECK_FILE(saveXml_tixml(filename + ".backup", m_rootPath, m_imgInfos), filename);
 		CHECK_FILE(saveXml_qxml(filename, m_rootPath, m_imgInfos), filename);
 	}
+
+	autoSetGenders(m_imgInfos, m_xmlExportPureName);
 
 	if (!PatternImageInfo::getPatternXmlName().isEmpty())
 	{
@@ -175,11 +211,11 @@ inline QString findAppropriateJdImgPath(QString root, QString xlslName, QString 
 		info.setFile(dir, imgName + exts[iExt]);
 		if (info.exists())
 			return info.absoluteFilePath();
-		dir = QDir::cleanPath(root + QDir::separator() + xlslName + QDir::separator() + "images");
+		dir = QDir::cleanPath(root + QDir::separator() + xlslName + QDir::separator() + "image");
 		info.setFile(dir, imgName + exts[iExt]);
 		if (info.exists())
 			return info.absoluteFilePath();
-		dir = QDir::cleanPath(root + QDir::separator() + "images");
+		dir = QDir::cleanPath(root + QDir::separator() + "image");
 		info.setFile(dir, imgName + exts[iExt]);
 		if (info.exists())
 			return info.absoluteFilePath();
@@ -293,7 +329,8 @@ void GlobalDataHolder::loadJdImageList(QString filename)
 			}
 		} // end if value[3]
 	} // end for row
-
+	autoSetGenders(m_imgInfos, m_xmlExportPureName);
+	saveXml(QDir::cleanPath(m_rootPath+QDir::separator()+m_xmlExportPureName));
 	// useful when construct __attributes.xml
 	//PatternImageInfo::constructTypeMaps_qxml_save("__attributes.xml");
 }
@@ -457,6 +494,7 @@ void GlobalDataHolder::loadPatternXml(QString filename)
 	PatternImageInfo::setPatternXmlName(filename);
 	for (auto& pattern : m_patternInfos)
 		m_namePatternMap.insert(pattern.getBaseName(), &pattern);
+	autoSetGenders(m_patternInfos, finfo.baseName());
 }
 
 void GlobalDataHolder::savePatternXml(QString filename)const
