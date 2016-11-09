@@ -64,7 +64,7 @@ void PatternWindow::updateImages()
 	} // end for info
 	if (selId >= 0)
 		ui.listWidget->setItemSelected(ui.listWidget->item(selId), true);
-	std::cout << m_icons.size() << " images founded" << std::endl;
+	setWindowTitle(g_dataholder.m_inputPatternXmlName + "]: " + QString().sprintf("%d", m_icons.size()));
 }
 
 void PatternWindow::listItemSelectionChanged()

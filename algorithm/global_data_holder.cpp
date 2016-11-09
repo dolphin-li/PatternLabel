@@ -131,23 +131,23 @@ void GlobalDataHolder::autoSetGenders(std::vector<PatternImageInfo>& infos, QStr
 			if (b.contains("_w") || b.contains("_nv"))
 			{
 				info.setAttributeType("gender-types", "female");
-				break;
+				continue;
 			}
 			if (b.contains("_m") || b.contains("_nan"))
 			{
 				info.setAttributeType("gender-types", "male");
-				break;
+				continue;
 			}
 			b = fileBaseName;
 			if (b.contains("_w") || b.contains("_nv"))
 			{
 				info.setAttributeType("gender-types", "female");
-				break;
+				continue;
 			}
 			if (b.contains("_m") || b.contains("_nan"))
 			{
 				info.setAttributeType("gender-types", "male");
-				break;
+				continue;
 			}
 		}
 	}
