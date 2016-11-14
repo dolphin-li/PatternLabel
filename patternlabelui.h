@@ -29,6 +29,8 @@ public:
 	void on_pbNextIndex_clicked();
 	void on_pbLastImageThisIndex_clicked();
 	void on_pbNextImageThisIndex_clicked();
+	void on_actionExport_training_data_triggered();
+	void on_actionRemove_other_triggered();
 	void pbGroupRbTypesClicked(int buttonID);
 	void on_sbCurIndex_valueChanged(int v);
 protected:

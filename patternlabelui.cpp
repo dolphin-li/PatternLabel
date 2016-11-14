@@ -446,6 +446,48 @@ void PatternLabelUI::on_pbNextImageThisIndex_clicked()
 	}
 }
 
+void PatternLabelUI::on_actionExport_training_data_triggered()
+{
+	try
+	{
+		QStringList names = QFileDialog::getOpenFileNames(this, "load pattern xml",
+			g_dataholder.m_lastRun_RootDir, "*.xml");
+		if (names.isEmpty())
+			return;
+		g_dataholder.exportPatternTrainingData(names);
+	} catch (std::exception e)
+	{
+		std::cout << e.what() << std::endl;
+	} catch (...)
+	{
+		std::cout << "unknown error" << std::endl;
+	}
+}
+
+void PatternLabelUI::on_actionRemove_other_triggered()
+{
+	try
+	{
+		
+		auto tmps = g_dataholder.m_imgInfos;
+		g_dataholder.m_imgInfos.clear();
+		for (const auto& info : tmps)
+		{
+			if (info.getAttributeType("cloth-types") != "other")
+				g_dataholder.m_imgInfos.push_back(info);
+		}
+		g_dataholder.m_curIndex = 0;
+		g_dataholder.m_curIndex_imgIndex = 0;
+		ui.sbCurIndex->setValue(g_dataholder.m_curIndex);
+	} catch (std::exception e)
+	{
+		std::cout << e.what() << std::endl;
+	} catch (...)
+	{
+		std::cout << "unknown error" << std::endl;
+	}
+}
+
 void PatternLabelUI::updateByIndex(int index, int imgId)
 {
 	if (g_dataholder.m_imgInfos.size() == 0)

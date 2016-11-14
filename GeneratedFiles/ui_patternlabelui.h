@@ -42,12 +42,16 @@ public:
     QAction *actionLoad_pattern_xml;
     QAction *actionUnique_patterns;
     QAction *actionSave_pattern_xml;
+    QAction *actionExport_training_data;
+    QAction *actionRemove_other;
     QWidget *centralWidget;
     QGridLayout *gridLayout;
     ImageViewer *widget;
     QMenuBar *menuBar;
     QMenu *menuFile;
     QMenu *menuEdit;
+    QMenu *menuTrain;
+    QMenu *menuEdit_2;
     QStatusBar *statusBar;
     QDockWidget *dockWidgetRight;
     QWidget *dockWidgetContentsRight;
@@ -86,6 +90,10 @@ public:
         actionUnique_patterns->setObjectName(QStringLiteral("actionUnique_patterns"));
         actionSave_pattern_xml = new QAction(PatternLabelUIClass);
         actionSave_pattern_xml->setObjectName(QStringLiteral("actionSave_pattern_xml"));
+        actionExport_training_data = new QAction(PatternLabelUIClass);
+        actionExport_training_data->setObjectName(QStringLiteral("actionExport_training_data"));
+        actionRemove_other = new QAction(PatternLabelUIClass);
+        actionRemove_other->setObjectName(QStringLiteral("actionRemove_other"));
         centralWidget = new QWidget(PatternLabelUIClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         gridLayout = new QGridLayout(centralWidget);
@@ -105,6 +113,10 @@ public:
         menuFile->setObjectName(QStringLiteral("menuFile"));
         menuEdit = new QMenu(menuBar);
         menuEdit->setObjectName(QStringLiteral("menuEdit"));
+        menuTrain = new QMenu(menuBar);
+        menuTrain->setObjectName(QStringLiteral("menuTrain"));
+        menuEdit_2 = new QMenu(menuBar);
+        menuEdit_2->setObjectName(QStringLiteral("menuEdit_2"));
         PatternLabelUIClass->setMenuBar(menuBar);
         statusBar = new QStatusBar(PatternLabelUIClass);
         statusBar->setObjectName(QStringLiteral("statusBar"));
@@ -180,6 +192,8 @@ public:
 
         menuBar->addAction(menuFile->menuAction());
         menuBar->addAction(menuEdit->menuAction());
+        menuBar->addAction(menuTrain->menuAction());
+        menuBar->addAction(menuEdit_2->menuAction());
         menuFile->addAction(actionLoad_image_list);
         menuFile->addAction(actionSave_xml);
         menuFile->addAction(actionLoad_xml);
@@ -188,6 +202,8 @@ public:
         menuEdit->addAction(actionLoad_pattern_xml);
         menuEdit->addAction(actionUnique_patterns);
         menuEdit->addAction(actionSave_pattern_xml);
+        menuTrain->addAction(actionExport_training_data);
+        menuEdit_2->addAction(actionRemove_other);
 
         retranslateUi(PatternLabelUIClass);
 
@@ -205,8 +221,12 @@ public:
         actionLoad_pattern_xml->setText(QApplication::translate("PatternLabelUIClass", "load pattern xml", 0));
         actionUnique_patterns->setText(QApplication::translate("PatternLabelUIClass", "unique patterns", 0));
         actionSave_pattern_xml->setText(QApplication::translate("PatternLabelUIClass", "save pattern xml", 0));
+        actionExport_training_data->setText(QApplication::translate("PatternLabelUIClass", "export training data", 0));
+        actionRemove_other->setText(QApplication::translate("PatternLabelUIClass", "remove other", 0));
         menuFile->setTitle(QApplication::translate("PatternLabelUIClass", "file", 0));
         menuEdit->setTitle(QApplication::translate("PatternLabelUIClass", "pattern", 0));
+        menuTrain->setTitle(QApplication::translate("PatternLabelUIClass", "train", 0));
+        menuEdit_2->setTitle(QApplication::translate("PatternLabelUIClass", "edit", 0));
         groupBox->setTitle(QApplication::translate("PatternLabelUIClass", "images", 0));
         pbNextImageThisIndex->setText(QApplication::translate("PatternLabelUIClass", "\\/", 0));
         pbNextImageThisIndex->setShortcut(QApplication::translate("PatternLabelUIClass", "Down", 0));

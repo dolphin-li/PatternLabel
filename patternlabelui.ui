@@ -47,8 +47,22 @@
     <addaction name="actionUnique_patterns"/>
     <addaction name="actionSave_pattern_xml"/>
    </widget>
+   <widget class="QMenu" name="menuTrain">
+    <property name="title">
+     <string>train</string>
+    </property>
+    <addaction name="actionExport_training_data"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit_2">
+    <property name="title">
+     <string>edit</string>
+    </property>
+    <addaction name="actionRemove_other"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
+   <addaction name="menuTrain"/>
+   <addaction name="menuEdit_2"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="dockWidgetRight">
@@ -188,6 +202,16 @@
   <action name="actionSave_pattern_xml">
    <property name="text">
     <string>save pattern xml</string>
+   </property>
+  </action>
+  <action name="actionExport_training_data">
+   <property name="text">
+    <string>export training data</string>
+   </property>
+  </action>
+  <action name="actionRemove_other">
+   <property name="text">
+    <string>remove other</string>
    </property>
   </action>
  </widget>

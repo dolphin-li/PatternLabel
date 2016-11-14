@@ -182,6 +182,13 @@ void GlobalDataHolder::loadXml(QString filename)
 		if (finfo.exists())
 		{
 			loadPatternXml(finfo.absoluteFilePath());
+
+			for (auto& info : m_imgInfos)
+			{
+				auto& iter = m_namePatternMap.find(info.getJdMappedPattern());
+				if (iter != m_namePatternMap.end())
+					iter.value().second++;
+			}
 		} // end if finfo
 	} // end if has pattern xml name
 }
@@ -493,7 +500,13 @@ void GlobalDataHolder::loadPatternXml(QString filename)
 	CHECK_FILE(loadXml_qxml(filename, finfo.absolutePath(), m_patternInfos), filename);
 	PatternImageInfo::setPatternXmlName(filename);
 	for (auto& pattern : m_patternInfos)
-		m_namePatternMap.insert(pattern.getBaseName(), &pattern);
+		m_namePatternMap.insert(pattern.getBaseName(), qMakePair(&pattern, 0));
+	for (auto& info : m_imgInfos)
+	{
+		auto& iter = m_namePatternMap.find(info.getJdMappedPattern());
+		if (iter != m_namePatternMap.end())
+			iter.value().second++;
+	}
 	autoSetGenders(m_patternInfos, finfo.baseName());
 }
 
@@ -520,6 +533,129 @@ void GlobalDataHolder::uniquePatterns()
 		m_patternInfos.push_back(info);
 	m_namePatternMap.clear();
 	for (auto& pattern : m_patternInfos)
-		m_namePatternMap.insert(pattern.getBaseName(), &pattern);
+		m_namePatternMap.insert(pattern.getBaseName(), qMakePair(&pattern, 0));
+	for (auto& info : m_imgInfos)
+	{
+		auto& iter = m_namePatternMap.find(info.getJdMappedPattern());
+		if (iter != m_namePatternMap.end())
+			iter.value().second++;
+	}
 	std::cout << "after cleaning: " << m_patternInfos.size() << std::endl;
+}
+
+void GlobalDataHolder::exportPatternTrainingData(const QStringList& labeledXmls)
+{
+	if (labeledXmls.isEmpty())
+		return;
+	QFileInfo inputFileInfo(labeledXmls[0]);
+	QFileInfo rinfo(m_rootPath), linfo(m_lastRun_RootDir);
+	if (inputFileInfo.absolutePath() != linfo.absoluteFilePath())
+	{
+		m_lastRun_RootDir = inputFileInfo.absolutePath();
+		m_lastRun_imgId = 0;
+	}
+	saveLastRunInfo();
+
+	// load all input xmls
+	std::vector<PatternImageInfo> imgInfosAll;
+	QString patternXmlName;
+	QMap<QString, int> patternUseNumMap, patternUseIdxMap;
+	QVector <QPair<int, QString>> patternUseNumInvMap;
+	for (const auto& xmlName : labeledXmls)
+	{
+		std::vector<PatternImageInfo> imgInfos;
+		CHECK_FILE(loadXml_qxml(xmlName, inputFileInfo.absolutePath(), imgInfos), xmlName);
+		auto tmp = PatternImageInfo::getPatternXmlName();
+		if (patternXmlName.isEmpty())
+			patternXmlName = tmp;
+		else if (patternXmlName != tmp)
+			std::cout << "warning exporting training data: pattern xml not matched!" << std::endl;
+		for (const auto& info : imgInfos)
+		{
+			if (info.getAttributeType("cloth-types") != "other")
+			{
+				auto pt = info.getJdMappedPattern();
+				if (!pt.isEmpty())
+				{
+					if (patternUseNumMap.find(pt) == patternUseNumMap.end())
+						patternUseNumMap.insert(pt, 1);
+					else
+						++patternUseNumMap[pt];
+					imgInfosAll.push_back(info);
+				}
+			} // end if not "other"
+		} // end for info
+		std::cout << "parsed: " << xmlName.toStdString() << std::endl;
+		std::flush(std::cout);
+	} // end for xml
+	PatternImageInfo::setPatternXmlName(patternXmlName);
+	int totalNumUsed = 0;
+	for (auto iter = patternUseNumMap.begin(); iter != patternUseNumMap.end(); ++iter)
+	{
+		patternUseNumInvMap.push_back(qMakePair(iter.value(), iter.key()));
+		totalNumUsed += iter.value();
+	}
+	qSort(patternUseNumInvMap.begin(), patternUseNumInvMap.end(), qGreater<QPair<int, QString>>());
+
+	// extract used patterns and save
+	loadPatternXml(patternXmlName);
+	std::vector<PatternImageInfo> patternUsed;
+	for (int idx = 0; idx != patternUseNumInvMap.size(); ++idx)
+	{
+		QString name = patternUseNumInvMap[idx].second;
+		const auto& iter = m_namePatternMap.find(name);
+		if (iter == m_namePatternMap.end())
+			continue;
+		patternUsed.push_back(*iter.value().first);
+	} // end for info
+	QString patternOutName = QDir::cleanPath(m_lastRun_PatternDir + QDir::separator() + "patterns_used.xml");
+	CHECK_FILE(saveXml_qxml(patternOutName, m_lastRun_PatternDir, patternUsed), patternOutName);
+
+	// save all used patterns ordered by the num of usage.
+	QString outSummaryName = QDir::cleanPath(inputFileInfo.absolutePath() + QDir::separator() + "z_labeled_pattern_idx_map.xml");
+	QFile outSummaryXml(outSummaryName);
+	if (!outSummaryXml.open(QIODevice::WriteOnly))
+		throw std::exception(("File not exist: " + outSummaryName.toStdString()).c_str());
+	QXmlStreamWriter writer(&outSummaryXml);
+	writer.setAutoFormatting(true);
+	writer.writeStartDocument();
+	writer.writeStartElement("document");
+	writer.writeTextElement("pattern-xml", PatternImageInfo::getPatternXmlName());
+	writer.writeComment(QString().sprintf("total num labeled: %d", totalNumUsed));
+	for (int idx = 0; idx != patternUseNumInvMap.size(); ++idx)
+	{
+		QString name = patternUseNumInvMap[idx].second;
+		writer.writeStartElement("pattern");
+		writer.writeAttribute("idx", QString().sprintf("%d", idx));
+		writer.writeAttribute("num", QString().sprintf("%d", patternUseNumMap[name]));
+		writer.writeAttribute("name", name);
+		writer.writeEndElement();
+		patternUseIdxMap.insert(name, idx);
+	} // end for info
+	writer.writeEndElement();
+	writer.writeEndDocument();
+
+	// save the jd-pattern map
+	QString outName = QDir::cleanPath(inputFileInfo.absolutePath() + QDir::separator() + "z_labeled_jdPatterns.txt");
+	std::wofstream stm1(outName.toStdWString());
+	stm1 << outSummaryName.toStdWString() << std::endl;
+	for (const auto& info : imgInfosAll)
+	{
+		if (info.numImages() == 0)
+			continue;
+		QString pt = info.getJdMappedPattern();
+		if (patternUseIdxMap.find(pt) == patternUseIdxMap.end())
+			continue;
+		QString imgName = info.getImageName(0);
+		QFileInfo imgInfo(imgName);
+		if (!imgInfo.exists())
+			continue;
+		QString out = QDir::cleanPath(info.getBaseName() + QDir::separator() + imgInfo.fileName());
+		stm1 << out.toStdWString() << " " << patternUseIdxMap[pt] << std::endl;
+	} // end for info
+	stm1.close();
+
+	// also save all labeled infos, mainly for debug
+	QString outXmlName = QDir::cleanPath(inputFileInfo.absolutePath() + QDir::separator() + "z_labeled_jdPatterns.xml");
+	CHECK_FILE(saveXml_qxml(outXmlName, inputFileInfo.absolutePath(), imgInfosAll), outXmlName);
 }

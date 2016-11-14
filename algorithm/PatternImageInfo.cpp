@@ -93,8 +93,10 @@ QString PatternImageInfo::getUrl()const
 
 QString PatternImageInfo::getAttributeType(const QString& typeName)const
 {
-	int id = m_types[typeName];
-	return s_typeSet[typeName].at(id);
+	auto iter = m_types.find(typeName);
+	if (iter == m_types.end())
+		return "";
+	return s_typeSet[typeName].at(iter.value());
 }
 
 void PatternImageInfo::setAttributeType(const QString& typeName, const QString& type)

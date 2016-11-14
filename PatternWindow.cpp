@@ -42,23 +42,34 @@ void PatternWindow::updateImages()
 		if (iter != g_dataholder.m_namePatternMap.end())
 		{
 			QSharedPointer<QListWidgetItem> icon(new QListWidgetItem());
-			icon->setIcon(QIcon(*iter.value()->getImage(m_itemId_imgId)));
-			icon->setText(iter.value()->getBaseName());
-			icon->setToolTip(iter.value()->getImageName(m_itemId_imgId));
+			icon->setIcon(QIcon(*iter.value().first->getImage(m_itemId_imgId)));
+			icon->setText(iter.value().first->getBaseName());
+			icon->setToolTip(QString().sprintf("[%d] ", iter.value().second)+ 
+				iter.value().first->getImageName(m_itemId_imgId));
 			ui.listWidget->addItem(icon.data());
 			m_icons.push_back(icon);
 			selId = 0;
-			m_lastInfo = iter.value();
+			m_lastInfo = iter.value().first;
 		} // end if iter
 	} // end if mapped
+	// insert matched items, sorted by their frequency
+	QVector<QPair<int, PatternImageInfo*>> matched;
 	for (const auto& info : g_dataholder.m_patternInfos)
 	{
 		if (info != query_info)
 			continue;
+		const auto& iter = g_dataholder.m_namePatternMap.find(info.getBaseName());
+		if (iter != g_dataholder.m_namePatternMap.end())
+			matched.push_back(qMakePair(iter.value().second, iter.value().first));
+	} // end for info
+	qSort(matched.begin(), matched.end(), qGreater<QPair<int, PatternImageInfo*>>());
+	for (const auto& match : matched)
+	{
+		const auto& info = *match.second;
 		QSharedPointer<QListWidgetItem> icon(new QListWidgetItem());
 		icon->setIcon(QIcon(*info.getImage(m_itemId_imgId)));
 		icon->setText(info.getBaseName());
-		icon->setToolTip(info.getImageName(m_itemId_imgId));
+		icon->setToolTip(QString().sprintf("[%d] ", match.first) + info.getImageName(m_itemId_imgId));
 		ui.listWidget->addItem(icon.data());
 		m_icons.push_back(icon);
 	} // end for info
@@ -77,7 +88,7 @@ void PatternWindow::listItemClicked(QListWidgetItem *item)
 	const auto& iter = g_dataholder.m_namePatternMap.find(item->text());
 	if (iter == g_dataholder.m_namePatternMap.end())
 		return;
-	m_itemId_imgId = (m_itemId_imgId + 1) % iter.value()->numImages();
+	m_itemId_imgId = (m_itemId_imgId + 1) % iter.value().first->numImages();
 
 	if (g_dataholder.m_curIndex >= g_dataholder.m_imgInfos.size()
 		|| g_dataholder.m_curIndex < 0)
@@ -85,17 +96,20 @@ void PatternWindow::listItemClicked(QListWidgetItem *item)
 	if (m_itemId_imgId == 0)
 	{
 		auto& query_info = g_dataholder.m_imgInfos[g_dataholder.m_curIndex];
-		query_info.setJdMappedPattern(iter.value()->getBaseName());
-		if (m_mainUI && m_lastInfo != iter.value())
+		query_info.setJdMappedPattern(iter.value().first->getBaseName());
+		if (m_mainUI && m_lastInfo != iter.value().first)
 		{
 			m_mainUI->requireSaveXml();
-			m_lastInfo = iter.value();
+			iter.value().second++;
+			if (m_lastInfo)
+				g_dataholder.m_namePatternMap.find(m_lastInfo->getBaseName()).value().second--;
+			m_lastInfo = iter.value().first;
 		}
 	}
 
-	while (iter.value()->getImage(m_itemId_imgId)->width() == 0)
-		m_itemId_imgId = (m_itemId_imgId + 1) % iter.value()->numImages();
-	item->setIcon(QIcon(*iter.value()->getImage(m_itemId_imgId)));
+	while (iter.value().first->getImage(m_itemId_imgId)->width() == 0)
+		m_itemId_imgId = (m_itemId_imgId + 1) % iter.value().first->numImages();
+	item->setIcon(QIcon(*iter.value().first->getImage(m_itemId_imgId)));
 	ui.listWidget->update();
 }
 

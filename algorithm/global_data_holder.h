@@ -20,6 +20,8 @@ public:
 	void loadPatternXml(QString filename);
 	void savePatternXml(QString filename)const;
 	void uniquePatterns();
+
+	void exportPatternTrainingData(const QStringList& labeledXmls);
 protected:
 	void loadLastRunInfo();
 	void saveLastRunInfo()const;
@@ -40,7 +42,7 @@ public:
 
 	////
 	std::vector<PatternImageInfo> m_patternInfos;
-	QMap<QString, PatternImageInfo*> m_namePatternMap;
+	QMap<QString, QPair<PatternImageInfo*,int>> m_namePatternMap;
 	mutable QString m_lastRun_PatternDir;
 	QString m_inputPatternXmlName;
 };
