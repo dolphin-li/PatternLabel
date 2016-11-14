@@ -33,6 +33,8 @@ public:
 	void on_actionRemove_other_triggered();
 	void pbGroupRbTypesClicked(int buttonID);
 	void on_sbCurIndex_valueChanged(int v);
+	void on_cbAddPatternMode_clicked();
+	void on_pbAddPattern_clicked();
 protected:
 	void setupRadioButtons();
 	void updateByIndex(int index, int imgId);

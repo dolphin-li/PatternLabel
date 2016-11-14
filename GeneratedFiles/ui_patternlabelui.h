@@ -13,6 +13,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QCheckBox>
 #include <QtWidgets/QDockWidget>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QGroupBox>
@@ -66,6 +67,8 @@ public:
     QGridLayout *gridLayout_4;
     QLabel *label;
     QSpinBox *sbCurIndex;
+    QCheckBox *cbAddPatternMode;
+    QPushButton *pbAddPattern;
     QSpacerItem *verticalSpacer;
     QConsole *console;
 
@@ -175,6 +178,16 @@ public:
 
         gridLayout_4->addWidget(sbCurIndex, 0, 1, 1, 1);
 
+        cbAddPatternMode = new QCheckBox(groupBox_2);
+        cbAddPatternMode->setObjectName(QStringLiteral("cbAddPatternMode"));
+
+        gridLayout_4->addWidget(cbAddPatternMode, 1, 0, 1, 1);
+
+        pbAddPattern = new QPushButton(groupBox_2);
+        pbAddPattern->setObjectName(QStringLiteral("pbAddPattern"));
+
+        gridLayout_4->addWidget(pbAddPattern, 1, 1, 1, 1);
+
 
         gridLayout_3->addWidget(groupBox_2, 2, 0, 1, 1);
 
@@ -238,6 +251,11 @@ public:
         pbLastImageThisIndex->setShortcut(QApplication::translate("PatternLabelUIClass", "Up", 0));
         groupBox_2->setTitle(QString());
         label->setText(QApplication::translate("PatternLabelUIClass", "Index", 0));
+        cbAddPatternMode->setText(QApplication::translate("PatternLabelUIClass", "add pattern mode", 0));
+#ifndef QT_NO_TOOLTIP
+        pbAddPattern->setToolTip(QApplication::translate("PatternLabelUIClass", "add a pattern from current image", 0));
+#endif // QT_NO_TOOLTIP
+        pbAddPattern->setText(QApplication::translate("PatternLabelUIClass", "add pattern", 0));
     } // retranslateUi
 
 };

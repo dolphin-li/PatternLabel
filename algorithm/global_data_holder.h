@@ -45,6 +45,8 @@ public:
 	QMap<QString, QPair<PatternImageInfo*,int>> m_namePatternMap;
 	mutable QString m_lastRun_PatternDir;
 	QString m_inputPatternXmlName;
+
+	bool m_addPatternMode;
 };
 
 extern GlobalDataHolder g_dataholder;

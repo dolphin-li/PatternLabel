@@ -27,6 +27,7 @@ void GlobalDataHolder::init()
 	m_lastRun_RootDir = "//dongping-pc1/sewingPatterns/burdastyle_data";
 	m_lastRun_PatternDir = "//dongping-pc1/sewingPatterns/burdastyle_data";
 	m_lastRun_imgId = 0;
+	m_addPatternMode = false;
 	loadLastRunInfo();
 }
 

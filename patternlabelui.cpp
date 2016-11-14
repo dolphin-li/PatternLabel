@@ -228,6 +228,8 @@ void PatternLabelUI::on_actionLoad_jd_image_list_triggered()
 
 void PatternLabelUI::requireSaveXml()
 {
+	if (g_dataholder.m_addPatternMode)
+		return;
 	if (g_dataholder.m_curIndex >= 0 && g_dataholder.m_curIndex_imgIndex >= 0)
 		m_xmlSaveThread->requireSave();
 }
@@ -364,17 +366,33 @@ void PatternLabelUI::on_actionSave_pattern_xml_triggered()
 {
 	try
 	{
-		QString name = QFileDialog::getSaveFileName(this, "save pattern xml",
+		QString savename = QFileDialog::getSaveFileName(this, "save pattern xml",
 			g_dataholder.m_lastRun_PatternDir, "*.xml");
-		if (name.isEmpty())
+		if (savename.isEmpty())
 			return;
-		if (!name.endsWith(".xml"))
-			name.append(".xml");
-		QFileInfo rinfo(name), linfo(g_dataholder.m_inputPatternXmlName);
-		if (rinfo.absoluteDir() != linfo.absoluteDir())
+		if (!savename.endsWith(".xml"))
+			savename.append(".xml");
+		QFileInfo saveinfo(savename), linfo(g_dataholder.m_inputPatternXmlName);
+		auto savepath = saveinfo.absolutePath();
+		if (saveinfo.absoluteDir() != linfo.absoluteDir())
+		{
 			std::cout << "warning: you seemed to save xml to a wrong folder!\n";
-		g_dataholder.savePatternXml(name);
-		std::cout << "patterns saved: " << name.toStdString() << std::endl;
+			// try to fix the path issue
+			for (auto& info : g_dataholder.m_patternInfos)
+			{
+				if (info.numImages() == 0)
+					throw std::exception("error: no image in the pattern to save!");
+				auto imgname = info.getImageName(0);
+				QFileInfo imginfo(imgname);
+				auto imgpath = imginfo.absolutePath();
+				if (imgpath.left(savepath.size()) != savepath)
+					throw std::exception("error: we cannot save xml in such a path!");
+				auto base = QDir::cleanPath(imgpath.right(imgpath.size() - savepath.size() - 1));
+				info.setBaseName(base);
+			} // end for info
+		} // end if pattern dir not matched
+		g_dataholder.savePatternXml(savename);
+		std::cout << "patterns saved: " << savename.toStdString() << std::endl;
 
 	} catch (std::exception e)
 	{
@@ -569,6 +587,37 @@ void PatternLabelUI::pbGroupRbTypesClicked(int buttonID)
 				}
 			}
 		} // end for anme
+		if (!m_patternWindow->isHidden())
+			m_patternWindow->updateImages();
+	} catch (std::exception e)
+	{
+		std::cout << e.what() << std::endl;
+	} catch (...)
+	{
+		std::cout << "unknown error" << std::endl;
+	}
+}
+
+void PatternLabelUI::on_cbAddPatternMode_clicked()
+{
+	g_dataholder.m_addPatternMode = ui.cbAddPatternMode->isChecked();
+	if (g_dataholder.m_addPatternMode)
+		m_patternWindow->show();
+}
+
+void PatternLabelUI::on_pbAddPattern_clicked()
+{
+	try
+	{
+		if (!g_dataholder.m_addPatternMode)
+			return;
+		if (g_dataholder.m_curIndex < 0 || g_dataholder.m_curIndex >= g_dataholder.m_imgInfos.size())
+			return;
+		const auto& info = g_dataholder.m_imgInfos[g_dataholder.m_curIndex];
+		g_dataholder.m_patternInfos.push_back(info);
+		g_dataholder.m_namePatternMap.clear();
+		for (auto& pattern : g_dataholder.m_patternInfos)
+			g_dataholder.m_namePatternMap.insert(pattern.getBaseName(), qMakePair(&pattern, 0));
 		if (!m_patternWindow->isHidden())
 			m_patternWindow->updateImages();
 	} catch (std::exception e)
