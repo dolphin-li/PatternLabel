@@ -469,7 +469,8 @@ void PatternLabelUI::on_actionRemove_other_triggered()
 {
 	try
 	{
-		int ret = QMessageBox::warning(this, "Remove", "Are you sure to remove all \"other\" typed images? this is not reversable and may corrupt the disk file upon auto-save.");
+		int ret = QMessageBox::warning(this, "Remove", "Are you sure to remove all \"other\" typed images?",
+			QMessageBox::Button::Cancel, QMessageBox::Button::Ok);
 		if (ret != QMessageBox::Ok)
 			return;
 		auto tmps = g_dataholder.m_imgInfos;
