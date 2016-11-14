@@ -21,7 +21,8 @@ bool PatternImageInfo::operator == (const PatternImageInfo& rhs)const
 	{
 		if (l.key() != r.key())
 			return false;
-		if (l.value() != r.value())
+		const auto& iter = s_typeSet[l.key()];
+		if (l.value() != r.value() && iter[l.value()] != "unknown" && iter[r.value()] != "unknown")
 			return false;
 	}
 	return true;

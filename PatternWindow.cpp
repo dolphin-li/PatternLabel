@@ -10,6 +10,7 @@ PatternWindow::PatternWindow(QWidget *parent)
 	m_mainUI = nullptr;
 	new QShortcut(QKeySequence(Qt::Key_F11), this, SLOT(showFullScreen()));
 	new QShortcut(QKeySequence(Qt::Key_Escape), this, SLOT(showNormal()));
+	new QShortcut(QKeySequence(Qt::Key_Delete), this, SLOT(removeSelectedPattern()));
 	connect(ui.listWidget, SIGNAL(itemSelectionChanged()), this, SLOT(listItemSelectionChanged()));
 	connect(ui.listWidget, SIGNAL(itemClicked(QListWidgetItem *)), this, SLOT(listItemClicked(QListWidgetItem *)));
 	m_lastInfo = nullptr;
@@ -111,6 +112,38 @@ void PatternWindow::listItemClicked(QListWidgetItem *item)
 		m_itemId_imgId = (m_itemId_imgId + 1) % iter.value().first->numImages();
 	item->setIcon(QIcon(*iter.value().first->getImage(m_itemId_imgId)));
 	ui.listWidget->update();
+}
+
+void PatternWindow::removeSelectedPattern()
+{
+	auto items = ui.listWidget->selectedItems();
+	if (items.size() == 0)
+		return;
+	const auto& item = items[0];
+	const auto& iter = g_dataholder.m_namePatternMap.find(item->text());
+	if (iter == g_dataholder.m_namePatternMap.end())
+		return;
+	
+	for (size_t i = 0; i != g_dataholder.m_patternInfos.size(); i++)
+	{
+		if (g_dataholder.m_patternInfos[i].getBaseName() == item->text())
+		{
+			g_dataholder.m_patternInfos.erase(g_dataholder.m_patternInfos.begin() + i);
+			break;
+		}
+	}	
+
+	g_dataholder.m_namePatternMap.clear();
+	for (auto& pattern : g_dataholder.m_patternInfos)
+		g_dataholder.m_namePatternMap.insert(pattern.getBaseName(), qMakePair(&pattern, 0));
+	for (auto& info : g_dataholder.m_imgInfos)
+	{
+		auto& iter = g_dataholder.m_namePatternMap.find(info.getJdMappedPattern());
+		if (iter != g_dataholder.m_namePatternMap.end())
+			iter.value().second++;
+	}
+
+	updateImages();
 }
 
 void PatternWindow::resizeEvent(QResizeEvent* ev)

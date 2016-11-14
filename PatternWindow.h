@@ -18,6 +18,7 @@ public:
 	public slots:
 	void listItemSelectionChanged();
 	void listItemClicked(QListWidgetItem *);
+	void removeSelectedPattern();
 protected:
 	void resizeEvent(QResizeEvent* ev);
 private:
