@@ -66,9 +66,10 @@ public:
     QGroupBox *groupBox_2;
     QGridLayout *gridLayout_4;
     QLabel *label;
-    QSpinBox *sbCurIndex;
     QCheckBox *cbAddPatternMode;
     QPushButton *pbAddPattern;
+    QSpinBox *sbCurIndex;
+    QCheckBox *cbMatchByClothTypeOnly;
     QSpacerItem *verticalSpacer;
     QConsole *console;
 
@@ -173,11 +174,6 @@ public:
 
         gridLayout_4->addWidget(label, 0, 0, 1, 1);
 
-        sbCurIndex = new QSpinBox(groupBox_2);
-        sbCurIndex->setObjectName(QStringLiteral("sbCurIndex"));
-
-        gridLayout_4->addWidget(sbCurIndex, 0, 1, 1, 1);
-
         cbAddPatternMode = new QCheckBox(groupBox_2);
         cbAddPatternMode->setObjectName(QStringLiteral("cbAddPatternMode"));
 
@@ -187,6 +183,17 @@ public:
         pbAddPattern->setObjectName(QStringLiteral("pbAddPattern"));
 
         gridLayout_4->addWidget(pbAddPattern, 1, 1, 1, 1);
+
+        sbCurIndex = new QSpinBox(groupBox_2);
+        sbCurIndex->setObjectName(QStringLiteral("sbCurIndex"));
+
+        gridLayout_4->addWidget(sbCurIndex, 0, 1, 1, 1);
+
+        cbMatchByClothTypeOnly = new QCheckBox(groupBox_2);
+        cbMatchByClothTypeOnly->setObjectName(QStringLiteral("cbMatchByClothTypeOnly"));
+        cbMatchByClothTypeOnly->setChecked(true);
+
+        gridLayout_4->addWidget(cbMatchByClothTypeOnly, 2, 0, 1, 1);
 
 
         gridLayout_3->addWidget(groupBox_2, 2, 0, 1, 1);
@@ -256,6 +263,7 @@ public:
         pbAddPattern->setToolTip(QApplication::translate("PatternLabelUIClass", "add a pattern from current image", 0));
 #endif // QT_NO_TOOLTIP
         pbAddPattern->setText(QApplication::translate("PatternLabelUIClass", "add pattern", 0));
+        cbMatchByClothTypeOnly->setText(QApplication::translate("PatternLabelUIClass", "match by cloth type only", 0));
     } // retranslateUi
 
 };

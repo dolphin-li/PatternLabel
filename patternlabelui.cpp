@@ -149,6 +149,7 @@ PatternLabelUI::PatternLabelUI(QWidget *parent)
 		m_xmlSaveThread = new XmlSaveThread();
 		m_xmlSaveThread->start();
 		g_dataholder.init();
+		ui.cbMatchByClothTypeOnly->setChecked(g_dataholder.m_matchByClothTypeOnly);
 		setupRadioButtons();
 	} catch (std::exception e)
 	{
@@ -536,9 +537,10 @@ void PatternLabelUI::updateByIndex(int index, int imgId)
 		} // end for btn
 	} // end for anme
 
-	setWindowTitle(g_dataholder.m_rootPath + QString().sprintf("]: %d/%d; %d/%d",
+	setWindowTitle(g_dataholder.m_rootPath + QString().sprintf("]: %d/%d; %d/%d; valid: %d",
 		g_dataholder.m_curIndex, g_dataholder.m_imgInfos.size(),
-		g_dataholder.m_curIndex_imgIndex, info.numImages()));
+		g_dataholder.m_curIndex_imgIndex, info.numImages(),
+		g_dataholder.countValidJdMatched()));
 
 	if (!m_patternWindow->isHidden())
 		m_patternWindow->updateImages();
@@ -587,8 +589,7 @@ void PatternLabelUI::pbGroupRbTypesClicked(int buttonID)
 				}
 			}
 		} // end for anme
-		if (!m_patternWindow->isHidden())
-			m_patternWindow->updateImages();
+		updateByIndex(g_dataholder.m_curIndex, g_dataholder.m_curIndex_imgIndex);
 	} catch (std::exception e)
 	{
 		std::cout << e.what() << std::endl;
@@ -618,6 +619,24 @@ void PatternLabelUI::on_pbAddPattern_clicked()
 		g_dataholder.m_namePatternMap.clear();
 		for (auto& pattern : g_dataholder.m_patternInfos)
 			g_dataholder.m_namePatternMap.insert(pattern.getBaseName(), qMakePair(&pattern, 0));
+		if (!m_patternWindow->isHidden())
+			m_patternWindow->updateImages();
+	} catch (std::exception e)
+	{
+		std::cout << e.what() << std::endl;
+	} catch (...)
+	{
+		std::cout << "unknown error" << std::endl;
+	}
+}
+
+void PatternLabelUI::on_cbMatchByClothTypeOnly_clicked()
+{
+	try
+	{
+		g_dataholder.m_matchByClothTypeOnly = ui.cbMatchByClothTypeOnly->isChecked();
+		if (g_dataholder.m_curIndex < 0 || g_dataholder.m_curIndex >= g_dataholder.m_imgInfos.size())
+			return;
 		if (!m_patternWindow->isHidden())
 			m_patternWindow->updateImages();
 	} catch (std::exception e)

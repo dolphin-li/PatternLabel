@@ -78,8 +78,16 @@ void PatternWindow::updateImages()
 		QVector<QPair<int, PatternImageInfo*>> matched;
 		for (const auto& info : g_dataholder.m_patternInfos)
 		{
-			if (info != query_info)
-				continue;
+			if (g_dataholder.m_matchByClothTypeOnly)
+			{
+				if (info.getAttributeType("cloth-types") != query_info.getAttributeType("cloth-types"))
+					continue;
+			} // match by cloth-types only
+			else
+			{
+				if (info != query_info)
+					continue;
+			} // match by all fields
 			const auto& iter = g_dataholder.m_namePatternMap.find(info.getBaseName());
 			if (iter != g_dataholder.m_namePatternMap.end())
 				matched.push_back(qMakePair(iter.value().second, iter.value().first));

@@ -28,6 +28,7 @@ void GlobalDataHolder::init()
 	m_lastRun_PatternDir = "//dongping-pc1/sewingPatterns/burdastyle_data";
 	m_lastRun_imgId = 0;
 	m_addPatternMode = false;
+	m_matchByClothTypeOnly = true;
 	loadLastRunInfo();
 }
 
@@ -177,7 +178,8 @@ void GlobalDataHolder::loadXml(QString filename)
 
 	autoSetGenders(m_imgInfos, m_xmlExportPureName);
 
-	if (!PatternImageInfo::getPatternXmlName().isEmpty())
+	if (!PatternImageInfo::getPatternXmlName().isEmpty()
+		&& !m_addPatternMode)
 	{
 		QFileInfo finfo(PatternImageInfo::getPatternXmlName());
 		if (finfo.exists())
@@ -444,6 +446,18 @@ bool GlobalDataHolder::saveXml_qxml(QString filename, QString root, const std::v
 	writer.writeEndElement();
 	writer.writeEndDocument();
 	return true;
+}
+
+int GlobalDataHolder::countValidJdMatched()const
+{
+	int num = 0;
+	for (const auto& info : m_imgInfos)
+	{
+		auto type = info.getAttributeType("cloth-types");
+		if (!type.isEmpty() && type != "other" && !info.getJdMappedPattern().isEmpty())
+			num++;
+	} // end for info
+	return num;
 }
 
 //////////////////////////////////////////////////////////////////////////////////

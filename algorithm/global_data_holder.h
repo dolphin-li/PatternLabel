@@ -22,6 +22,8 @@ public:
 	void uniquePatterns();
 
 	void exportPatternTrainingData(const QStringList& labeledXmls);
+
+	int countValidJdMatched()const;
 protected:
 	void loadLastRunInfo();
 	void saveLastRunInfo()const;
@@ -47,6 +49,7 @@ public:
 	QString m_inputPatternXmlName;
 
 	bool m_addPatternMode;
+	bool m_matchByClothTypeOnly;
 };
 
 extern GlobalDataHolder g_dataholder;

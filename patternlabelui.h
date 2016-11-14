@@ -35,6 +35,7 @@ public:
 	void on_sbCurIndex_valueChanged(int v);
 	void on_cbAddPatternMode_clicked();
 	void on_pbAddPattern_clicked();
+	void on_cbMatchByClothTypeOnly_clicked();
 protected:
 	void setupRadioButtons();
 	void updateByIndex(int index, int imgId);
