@@ -9,6 +9,7 @@
 #include <QThread>
 #include <QMutex>
 #include <QShortcut>
+#include <QMessageBox>
 #include "PatternWindow.h"
 
 class QDebugStream : public std::basic_streambuf<char>
@@ -468,7 +469,9 @@ void PatternLabelUI::on_actionRemove_other_triggered()
 {
 	try
 	{
-		
+		int ret = QMessageBox::warning(this, "Remove", "Are you sure to remove all \"other\" typed images? this is not reversable and may corrupt the disk file upon auto-save.");
+		if (ret != QMessageBox::Ok)
+			return;
 		auto tmps = g_dataholder.m_imgInfos;
 		g_dataholder.m_imgInfos.clear();
 		for (const auto& info : tmps)

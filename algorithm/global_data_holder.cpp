@@ -190,6 +190,8 @@ void GlobalDataHolder::loadXml(QString filename)
 					iter.value().second++;
 			}
 		} // end if finfo
+		else
+			std::cout << "warning, pattern not exists: " << finfo.absoluteFilePath().toStdString() << std::endl;
 	} // end if has pattern xml name
 }
 
